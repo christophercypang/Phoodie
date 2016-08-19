@@ -1,0 +1,13 @@
+[debug] ----------------------------------------------------------------------
+[debug] Command:      C:\Program Files\nodejs\node.exe C:\Users\chris\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] CLI Version:  3.0.4
+[debug] Platform:     win32
+[debug] Node Version: v4.4.7
+[debug] Time:         Wed Jul 27 2016 10:45:44 GMT-0700 (Pacific Summer Time)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[info] Starting Firebase development server...
+[info] 
+[warn] !  No Firebase project directory detected. Serving static content from C:\Users\chris\Documents\HashTag\HashTag
+[info] 
+[info] Server listening at: http://localhost:5000

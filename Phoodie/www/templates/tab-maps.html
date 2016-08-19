@@ -1,0 +1,27 @@
+<ion-view view-title="Maps" >
+
+	<ion-content ng-controller="MapCtrl" ng-init="initialize(); initAutocomplete(); onPlaceChanged()">
+		<div>
+		<div class='col-sm-6'>
+		<form name="searchForm" class='searchbar' novalidate ng-submit="search()">
+			<div class="input-group">
+				<input id="autocomplete" name="place" type="text" class="form-control" ng-model="searchPlace" required autofocus />
+				<span class="input-group-btn">
+					<button class="btn btn-primary submitButton" ng-disabled="searchForm.$invalid" ng-click="searchLocation()">Search</button>
+					<button class="btn btn-primary submitButton" ng-click="testSave()">TEST SAVE</button>
+				</span>
+			</div>
+		</form>
+		</div>
+		<div class='col-sm-2 ortext'>
+			<h3> or </h3>
+		</div>
+
+		<div class='col-sm-4 choosebutton'>
+			<button class='btn btn-primary' ng-click='locationPopUp()'> Choose from a location </button>
+		</div>
+		</div>
+		<div id="map" data-tap-disabled="true"></div>
+	</ion-content>
+</ion-view>
+

@@ -1,0 +1,45 @@
+/* Empty. Add your own CSS if you like */
+
+
+
+.testing {
+	padding-top: 10px;
+	font-size: 60px;
+}
+
+.scroll {
+	height: 100%;
+}
+
+#map {
+	width: 100%;
+	height: 100%;
+}
+
+.searchbar {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.form-control {
+	margin-left: 10px;
+}
+
+.submitButton {
+	margin-left: 5px !important;
+}
+
+.ortext {
+	margin-top: 10px;
+	text-align: center;
+}
+
+.choosebutton {
+	margin-top: 10px;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.popup {
+	width: 75% !important;
+}
