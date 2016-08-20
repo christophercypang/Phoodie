@@ -15,11 +15,7 @@ angular.module('phoodie.controllers', [])
   $scope.data = $firebaseObject(ref);
 
   $scope.testSave = function() {
-    var getData = firebase.database().ref('restaurants/' + '0cb35faecc36f05ad3b6082393f9e6597013ad12').once('value', function(snapshot){
-      console.log('GET DATA SUCCESS', JSON.stringify(snapshot.val()));
-    });
-
-    console.log(getData);
+    //TESTING HERE ONLY
   }
 
 
