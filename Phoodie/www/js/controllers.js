@@ -507,7 +507,7 @@ angular.module('phoodie.controllers', [])
 
 
 .controller('PhotoCtrl', function($scope, $cordovaCamera, $firebaseObject) {
-
+  
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
 
@@ -535,7 +535,7 @@ angular.module('phoodie.controllers', [])
 
               })
 
-.controller('DashCtrl', function($scope) {
+.controller('UploadCtrl', function($scope, $firebaseObject) {
 
 })
 
