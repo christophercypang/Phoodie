@@ -535,7 +535,100 @@ angular.module('phoodie.controllers', [])
 
               })
 
-.controller('UploadCtrl', function($scope, $firebaseObject) {
+.controller('UploadCtrl', function($scope, $firebaseObject, $cordovaImagePicker, $cordovaFile) {
+
+
+
+  $scope.doGetImage = function() {
+    var options = {
+      maximumImagesCount: 1, //only pick 1 image
+      width: 800,
+      height: 800,
+      quality: 80
+    };
+
+    $cordovaImagePicker.getPictures(options)
+      .then(function (results) {
+        console.log('Image URI: ' + results[0]);
+
+        //confirm we are getting image back
+        alert(results[0]);
+
+        //read the image into an array buffer
+        //from ngcordova/plugins/file documentation
+        var fileName = results[0].replace(/^.*[\\\/]/, '');
+
+        $cordovaFile.readAsText(cordova.file.tempDirectory, fileName)
+          .then(function (success) {
+            //success - get blob data
+            var imageBlob = new Blob([success], {type: "image/jpeg"});
+
+            saveToFirebase(imageBlob, fileName, function(_response){
+                if(_response) {
+                  alert(_response.downloadURL);
+                }
+            });
+
+
+          }, function(error) {
+            //error
+          });
+
+
+      }, function (error) {
+        // error getting photos
+      });
+  }
+
+
+
+    // from firebase/storage/web/upload-files
+
+    function saveToFirebase(_imageBlob, _filename, _callback) {
+
+      var storageRef = firebase.storage().ref();
+
+
+      // pass in the _filename, and save the _imageblob
+      var uploadTask = storageRef.child('images/' + _filename).put(_imageBlob);
+
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on('state_changed', // or 'state_changed'
+      function(snapshot) {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+          console.log('Upload is paused');
+          break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+          console.log('Upload is running');
+          break;
+        }
+      }, function(error) {
+        
+          alert(error.message)
+          _callback(null);
+
+      }, function() {
+        // Upload completed successfully, now we can get the download URL
+        var downloadURL = uploadTask.snapshot.downloadURL;
+
+        // when done, pass back information on the saved image
+        _callback(uploadTask.snapshot)
+      });
+    }
+
+    $scope.testUpload = function() {
+
+    }
+
+
+
+
+
+
 
 })
 
