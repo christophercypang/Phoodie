@@ -520,8 +520,9 @@ angular.module('phoodie.controllers', [])
                     sourceType: Camera.PictureSourceType.CAMERA,
                     allowEdit: true,
                     encodingType: Camera.EncodingType.JPEG,
-                    targetWidth: 300,
-                    targetHeight: 300,
+                    targetWidth: 1024,
+                    targetHeight: 768,
+                    quality: 100,
                     popoverOptions: CameraPopoverOptions,
                     saveToPhotoAlbum: true
                   };
