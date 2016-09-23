@@ -1,0 +1,46 @@
+<div class="top">
+	
+	<div class='loginform'>
+		<form name="loginform" novalidate>
+		<label class="item item-input">
+			<input type="email" placeholder="Email" name="email" ng-model="email" required>
+		</label>
+		<label class="item item-input">
+            <input type="password" placeholder="Password" name="password" ng-model="password" required show-hide-input>
+        </label>
+        <a class="button button-small button-block icon-left ion-help-circled" ng-click="showForgotPassword()">
+            Forgot password
+        </a>
+        <button type="submit" class="log-in button button-block bottombuttonblock" ng-click="getLogin(username, password)" ng-disabled="login_form.$invalid">
+            Sign In
+         </button>
+         <!--
+         <button type="submit" class="log-in button button-block bottombuttonblock">
+            Cancel
+         </button> -->
+
+		</form>
+	</div>
+		
+
+</div>
+	
+
+	<!--<form name="login_form" class="" novalidate>
+          <div class="form-fields-outer list list-inset">
+            <label class="item item-input">
+              <input type="email" placeholder="Email" name="username" ng-model="username" required>
+            </label>
+            <label class="item item-input" show-hide-container>
+              <input type="password" placeholder="Password" name="password" ng-model="password" required show-hide-input>
+            </label>
+          </div>
+          <a class="button button-small button-block icon-left ion-help-circled" ng-click="showForgotPassword()">
+            Forgot password
+          </a>
+          <button type="submit" class="log-in button button-block" ng-click="getLogin(username, password)" ng-disabled="login_form.$invalid">
+            Sign In
+          </button>
+        </form>
+	</div>-->
+

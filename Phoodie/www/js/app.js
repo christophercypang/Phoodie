@@ -52,12 +52,11 @@ angular.module('phoodie', ['ionic', 'phoodie.controllers', 'phoodie.services', '
     }
   })
 
-  .state('tab.chats', {
-      url: '/chats',
+  .state('tab.upload', {
+      url: '/upload',
       views: {
-        'tab-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
+        'upload': {
+          templateUrl: 'templates/upload.html',
         }
       }
     })
@@ -74,9 +73,17 @@ angular.module('phoodie', ['ionic', 'phoodie.controllers', 'phoodie.services', '
   .state('tab.maps', {
     url: '/maps',
     views: {
-      'tab-maps': {
-        templateUrl: 'templates/tab-maps.html',
-        controller: 'AccountCtrl'
+      'maps': {
+        templateUrl: 'templates/maps.html',
+      }
+    }
+  })
+
+  .state('tab.account', {
+    url: '/account',
+    views: {
+      'account': {
+        templateUrl: 'templates/account.html',
       }
     }
   });

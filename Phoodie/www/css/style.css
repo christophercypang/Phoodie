@@ -1,12 +1,6 @@
 /* Empty. Add your own CSS if you like */
 
 
-
-.testing {
-	padding-top: 10px;
-	font-size: 60px;
-}
-
 .scroll {
 	height: 100%;
 }
@@ -19,14 +13,16 @@
 .searchbar {
 	margin-top: 10px;
 	margin-bottom: 10px;
-}
+	margin-left: 0px;
 
-.form-control {
-	margin-left: 10px;
 }
 
 .submitButton {
 	margin-left: 5px !important;
+}
+
+.loginbutton{
+	margin-top: 10px;
 }
 
 .ortext {
@@ -40,6 +36,32 @@
 	margin-bottom: 10px;
 }
 
-.popup {
-	width: 75% !important;
+.forgotpwtext{
+	color: black;
 }
+
+.popup{
+	
+	border-radius: 5px !important;
+
+}
+
+.bottombuttonblock{
+	display: inline;
+}
+
+.close-popup {
+    top: 0px;
+    position: absolute;
+    right: 0px;
+    background-color: #fcfcfc;
+    color: #333333;
+    border: none;
+    padding: 0px;
+    min-width: 0px;
+    min-height: 0px;
+    display: inline-block;
+    font-family: "Ionicons";
+    font-size: 26px; 
+    margin-right: 5px !important;
+  }

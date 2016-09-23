@@ -1,6 +1,6 @@
 angular.module('phoodie.controllers', [])
 
-.controller('MapCtrl', function($scope, $ionicLoading, mapService, $ionicPopup, $firebaseObject) {
+.controller('MapCtrl', function($scope, $ionicLoading, mapService, $ionicPopup, $firebaseObject, $ionicModal) {
 
   //mapService.init();
   var map;
@@ -15,11 +15,7 @@ angular.module('phoodie.controllers', [])
   $scope.data = $firebaseObject(ref);
 
   $scope.testSave = function() {
-    var getData = firebase.database().ref('restaurants/' + '0cb35faecc36f05ad3b6082393f9e6597013ad12').once('value', function(snapshot){
-      console.log('GET DATA SUCCESS', JSON.stringify(snapshot.val()));
-    });
-
-    console.log(getData);
+    //TESTING HERE ONLY
   }
 
 
@@ -35,7 +31,6 @@ angular.module('phoodie.controllers', [])
       center: {lat: -34.397, lng: 150.644},
       zoom: 6
     });*/
-
 
     var infoWindow = new google.maps.InfoWindow({map: map});
 
@@ -61,7 +56,7 @@ angular.module('phoodie.controllers', [])
             var options = {
               center: new google.maps.LatLng(thisLat, thisLng),
               zoom: 15,
-              disableDefaultUI: true    
+              disableDefaultUI: false    
             } 
 
 
@@ -197,9 +192,9 @@ angular.module('phoodie.controllers', [])
         var marker = new google.maps.Marker({
         map: map,
         position: place.geometry.location
-        })*/
+      })*/
 
-      }
+    }
     )}
 
 
@@ -295,11 +290,11 @@ angular.module('phoodie.controllers', [])
                         firebase.database().ref('restaurants/' + uniqueid).set({
                         //"UniqueID": place.id,
                         "Restaurant Name": place.name
-                       });
+                      });
                       } else {
                         console.log('GET DATA SUCCESS', restaurantResult);
                       }
-                     });
+                    });
 
 
                   });
@@ -505,7 +500,38 @@ angular.module('phoodie.controllers', [])
             map: map,
             title: 'Hello World!'
           });
-        } 
+        }
+
+      
+
+        // Open the login modal
+        $scope.loginPopUp = function() {
+          $scope.data = {};
+          var loginPopup = $ionicPopup.show({
+          templateUrl: 'templates/login.html',
+          title: 'Sign In',
+          buttons: [
+             { text: '', type: 'close-popup ion-ios-close-outline' }
+          ]
+          
+          /*buttons: [
+                {
+                    text: 'Cancel'
+                }, {
+                  text: '<b>Login</b>',
+                  type: 'button-positive',
+                  onTap: function(e){
+                    if (!$scope.email){
+                      e.preventDefault();
+                    } else {
+                      console.log('hello');
+                    }
+                    
+                  }                
+                }] */
+         
+          });
+        }; 
 
       })
 
@@ -524,8 +550,9 @@ angular.module('phoodie.controllers', [])
                     sourceType: Camera.PictureSourceType.CAMERA,
                     allowEdit: true,
                     encodingType: Camera.EncodingType.JPEG,
-                    targetWidth: 300,
-                    targetHeight: 300,
+                    targetWidth: 1024,
+                    targetHeight: 768,
+                    quality: 100,
                     popoverOptions: CameraPopoverOptions,
                     saveToPhotoAlbum: true
                   };
@@ -539,9 +566,102 @@ angular.module('phoodie.controllers', [])
 
               })
 
-.controller('DashCtrl', function($scope) {
+.controller('UploadCtrl', function($scope, $firebaseObject, $cordovaImagePicker, $cordovaFile) {
 
-})
+/*
+
+  $scope.doGetImage = function() {
+    var options = {
+      maximumImagesCount: 1, //only pick 1 image
+      width: 800,
+      height: 800,
+      quality: 80
+    };
+
+    $cordovaImagePicker.getPictures(options)
+      .then(function (results) {
+        console.log('Image URI: ' + results[0]);
+
+        //confirm we are getting image back
+        alert(results[0]);
+
+        //read the image into an array buffer
+        //from ngcordova/plugins/file documentation
+        var fileName = results[0].replace(/^.*[\\\/]/, '');
+
+        $cordovaFile.readAsText(cordova.file.tempDirectory, fileName)
+          .then(function (success) {
+            //success - get blob data
+            var imageBlob = new Blob([success], {type: "image/jpeg"});
+
+            saveToFirebase(imageBlob, fileName, function(_response){
+                if(_response) {
+                  alert(_response.downloadURL);
+                }
+            });
+
+
+          }, function(error) {
+            //error
+          });
+
+
+      }, function (error) {
+        // error getting photos
+      });
+  }
+
+
+
+    // from firebase/storage/web/upload-files
+
+    function saveToFirebase(_imageBlob, _filename, _callback) {
+
+      var storageRef = firebase.storage().ref();
+
+
+      // pass in the _filename, and save the _imageblob
+      var uploadTask = storageRef.child('images/' + _filename).put(_imageBlob);
+
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on('state_changed', // or 'state_changed'
+      function(snapshot) {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+          console.log('Upload is paused');
+          break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+          console.log('Upload is running');
+          break;
+        }
+      }, function(error) {
+        
+          alert(error.message)
+          _callback(null);
+
+      }, function() {
+        // Upload completed successfully, now we can get the download URL
+        var downloadURL = uploadTask.snapshot.downloadURL;
+
+        // when done, pass back information on the saved image
+        _callback(uploadTask.snapshot)
+      });
+    }
+
+    $scope.testUpload = function() {
+
+    }
+
+
+
+    */
+
+
+
+  })
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
