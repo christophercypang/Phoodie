@@ -45,3 +45,23 @@
 	border-radius: 5px !important;
 
 }
+
+.bottombuttonblock{
+	display: inline;
+}
+
+.close-popup {
+    top: 0px;
+    position: absolute;
+    right: 0px;
+    background-color: #fcfcfc;
+    color: #333333;
+    border: none;
+    padding: 0px;
+    min-width: 0px;
+    min-height: 0px;
+    display: inline-block;
+    font-family: "Ionicons";
+    font-size: 26px; 
+    margin-right: 5px !important;
+  }

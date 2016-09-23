@@ -511,20 +511,24 @@ angular.module('phoodie.controllers', [])
           templateUrl: 'templates/login.html',
           title: 'Sign In',
           buttons: [
+             { text: '', type: 'close-popup ion-ios-close-outline' }
+          ]
+          
+          /*buttons: [
                 {
                     text: 'Cancel'
                 }, {
                   text: '<b>Login</b>',
                   type: 'button-positive',
                   onTap: function(e){
-                    if (!$scope.email && !$scope.password){
+                    if (!$scope.email){
                       e.preventDefault();
                     } else {
                       console.log('hello');
                     }
                     
                   }                
-                }]
+                }] */
          
           });
         }; 

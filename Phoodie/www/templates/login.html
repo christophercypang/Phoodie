@@ -11,6 +11,13 @@
         <a class="button button-small button-block icon-left ion-help-circled" ng-click="showForgotPassword()">
             Forgot password
         </a>
+        <button type="submit" class="log-in button button-block bottombuttonblock" ng-click="getLogin(username, password)" ng-disabled="login_form.$invalid">
+            Sign In
+         </button>
+         <!--
+         <button type="submit" class="log-in button button-block bottombuttonblock">
+            Cancel
+         </button> -->
 
 		</form>
 	</div>
