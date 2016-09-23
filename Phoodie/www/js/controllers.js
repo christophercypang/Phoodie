@@ -32,7 +32,6 @@ angular.module('phoodie.controllers', [])
       zoom: 6
     });*/
 
-
     var infoWindow = new google.maps.InfoWindow({map: map});
 
         // Try HTML5 geolocation.
@@ -57,7 +56,7 @@ angular.module('phoodie.controllers', [])
             var options = {
               center: new google.maps.LatLng(thisLat, thisLng),
               zoom: 15,
-              disableDefaultUI: true    
+              disableDefaultUI: false    
             } 
 
 

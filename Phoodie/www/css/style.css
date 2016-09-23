@@ -19,6 +19,8 @@
 .searchbar {
 	margin-top: 10px;
 	margin-bottom: 10px;
+	margin-left: 0px;
+
 }
 
 .form-control {
@@ -42,4 +44,8 @@
 
 .popup {
 	width: 75% !important;
+}
+
+.googlemaps{
+
 }
