@@ -1,12 +1,6 @@
 /* Empty. Add your own CSS if you like */
 
 
-
-.testing {
-	padding-top: 10px;
-	font-size: 60px;
-}
-
 .scroll {
 	height: 100%;
 }
@@ -23,12 +17,12 @@
 
 }
 
-.form-control {
-	margin-left: 10px;
-}
-
 .submitButton {
 	margin-left: 5px !important;
+}
+
+.loginbutton{
+	margin-top: 10px;
 }
 
 .ortext {
@@ -42,10 +36,12 @@
 	margin-bottom: 10px;
 }
 
-.popup {
-	width: 75% !important;
+.forgotpwtext{
+	color: black;
 }
 
-.googlemaps{
+.popup{
+	
+	border-radius: 5px !important;
 
 }

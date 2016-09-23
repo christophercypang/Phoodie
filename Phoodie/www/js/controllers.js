@@ -1,6 +1,6 @@
 angular.module('phoodie.controllers', [])
 
-.controller('MapCtrl', function($scope, $ionicLoading, mapService, $ionicPopup, $firebaseObject) {
+.controller('MapCtrl', function($scope, $ionicLoading, mapService, $ionicPopup, $firebaseObject, $ionicModal) {
 
   //mapService.init();
   var map;
@@ -192,9 +192,9 @@ angular.module('phoodie.controllers', [])
         var marker = new google.maps.Marker({
         map: map,
         position: place.geometry.location
-        })*/
+      })*/
 
-      }
+    }
     )}
 
 
@@ -290,11 +290,11 @@ angular.module('phoodie.controllers', [])
                         firebase.database().ref('restaurants/' + uniqueid).set({
                         //"UniqueID": place.id,
                         "Restaurant Name": place.name
-                       });
+                      });
                       } else {
                         console.log('GET DATA SUCCESS', restaurantResult);
                       }
-                     });
+                    });
 
 
                   });
@@ -500,13 +500,40 @@ angular.module('phoodie.controllers', [])
             map: map,
             title: 'Hello World!'
           });
-        } 
+        }
+
+      
+
+        // Open the login modal
+        $scope.loginPopUp = function() {
+          $scope.data = {};
+          var loginPopup = $ionicPopup.show({
+          templateUrl: 'templates/login.html',
+          title: 'Sign In',
+          buttons: [
+                {
+                    text: 'Cancel'
+                }, {
+                  text: '<b>Login</b>',
+                  type: 'button-positive',
+                  onTap: function(e){
+                    if (!$scope.email && !$scope.password){
+                      e.preventDefault();
+                    } else {
+                      console.log('hello');
+                    }
+                    
+                  }                
+                }]
+         
+          });
+        }; 
 
       })
 
 
 .controller('PhotoCtrl', function($scope, $cordovaCamera, $firebaseObject) {
-  
+
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
 
@@ -626,11 +653,11 @@ angular.module('phoodie.controllers', [])
 
 
 
-*/
+    */
 
 
 
-})
+  })
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called

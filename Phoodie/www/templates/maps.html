@@ -4,8 +4,6 @@
 
 
 		<div class="container">
-
-		
 			<div class='col-sm-6'>
 				<form name="searchForm" class='searchbar' novalidate ng-submit="search()">
 					<div class="input-group">
@@ -21,8 +19,11 @@
 				<h3> or </h3>
 			</div>
 
-			<div class='col-sm-4 choosebutton'>
+			<div class='col-sm-2 choosebutton'>
 				<button class='btn btn-primary' ng-click='locationPopUp()'> Choose from a location </button>
+			</div> 
+			<div class='col-sm-2 loginbutton'>
+				<button class='btn btn-primary' ng-click='loginPopUp()'> Login </button>
 			</div> 
 		</div>
 		<div id="map" data-tap-disabled="true"></div>
