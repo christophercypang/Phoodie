@@ -538,7 +538,7 @@ angular.module('phoodie.controllers', [])
 
 .controller('UploadCtrl', function($scope, $firebaseObject, $cordovaImagePicker, $cordovaFile) {
 
-
+/*
 
   $scope.doGetImage = function() {
     var options = {
@@ -627,7 +627,7 @@ angular.module('phoodie.controllers', [])
 
 
 
-
+*/
 
 
 
