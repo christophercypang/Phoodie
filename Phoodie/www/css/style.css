@@ -41,20 +41,21 @@
 }
 
 .popup{
-	
 	border-radius: 5px !important;
-
 }
 
 .bottombuttonblock{
 	display: inline;
+	bottom: 0px;
+	right: 0px;
+	position: absolute;
 }
 
 .close-popup {
     top: 0px;
     position: absolute;
-    right: 0px;
-    background-color: #fcfcfc;
+    right: 8px;
+    background-color: #F5F5F5;
     color: #333333;
     border: none;
     padding: 0px;
