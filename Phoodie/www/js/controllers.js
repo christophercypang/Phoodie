@@ -572,8 +572,20 @@ angular.module('phoodie.controllers', [])
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
 
-  $scope.getLogin = function(email,password){
-    console.log('test');
+  $scope.getLogin = function(email, password){
+    console.log(email);
+    console.log(password);
+  }
+
+  $scope.createAccount = function(email,password){
+    console.log(email);
+    console.log(password);
+
+    firebase.auth().createUserWithEmailAndPassword(email,password).catch(function(error){
+      var errorCode = error.code;
+      var errorMessage = error.message;
+    })
+
   }
 })
 
