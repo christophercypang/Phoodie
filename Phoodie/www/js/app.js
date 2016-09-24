@@ -75,6 +75,7 @@ angular.module('phoodie', ['ionic', 'phoodie.controllers', 'phoodie.services', '
     views: {
       'maps': {
         templateUrl: 'templates/maps.html',
+        controller: 'MapCtrl'
       }
     }
   })
@@ -84,6 +85,7 @@ angular.module('phoodie', ['ionic', 'phoodie.controllers', 'phoodie.services', '
     views: {
       'account': {
         templateUrl: 'templates/account.html',
+        controller: 'MapCtrl'
       }
     }
   });

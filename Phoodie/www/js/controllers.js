@@ -14,6 +14,8 @@ angular.module('phoodie.controllers', [])
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
 
+
+
   $scope.testSave = function() {
     //TESTING HERE ONLY
   }
@@ -565,6 +567,15 @@ angular.module('phoodie.controllers', [])
                 }
 
               })
+
+.controller('UserCtrl', function($scope, $firebaseObject){
+  var ref = firebase.database().ref();
+  $scope.data = $firebaseObject(ref);
+
+  $scope.getLogin = function(email,password){
+    console.log('test');
+  }
+})
 
 .controller('UploadCtrl', function($scope, $firebaseObject, $cordovaImagePicker, $cordovaFile) {
 
