@@ -572,9 +572,31 @@ angular.module('phoodie.controllers', [])
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
 
-  $scope.getLogin = function(email, password){
+  $scope.doLogin = function(email, password){
     console.log(email);
     console.log(password);
+
+    firebase.auth().signInWithEmailAndPassword(email,password).catch(function(error){
+      var errorCode = error.code;
+      var errorMessage = errorMessage;
+    })
+
+    firebase.auth().onAuthStateChanged(function(user){
+      if(user){
+        // user signed in
+        console.log('user signed in successfully');
+        console.log(user.email);
+      } else {
+        // no user signed in
+      }
+    })
+
+    /*
+    var user = firebase.auth().currentUser;
+    console.log(user); */
+
+
+
   }
 
   $scope.createAccount = function(email,password){
@@ -585,7 +607,6 @@ angular.module('phoodie.controllers', [])
       var errorCode = error.code;
       var errorMessage = error.message;
     })
-
   }
 })
 
