@@ -606,30 +606,57 @@ angular.module('phoodie.controllers', [])
     console.log(email);
     console.log(password);
 
+    var loggedIn = false;
+
     
     firebase.auth().signInWithEmailAndPassword(email,password).catch(function(error){
       var errorCode = error.code;
       var errorMessage = errorMessage;
     })
 
+    //$scope.testing();
+
     firebase.auth().onAuthStateChanged(function(user){
       if(user){
         // user signed in
         console.log('user signed in successfully');
         console.log(user.email);
-        loginPopup.close();
+        loggedIn = true;
       } else {
         // no user signed in
         console.log('error user not signed in');
       }
     })
 
+    loginPopup.close();
+        var loginSuccessPopup = $ionicPopup.alert({
+          title: 'Login Successful!',
+          template: 'Welcome'
+    });
 
     /*
     var user = firebase.auth().currentUser;
     console.log(user); */
 
   }
+
+  /*
+  $scope.testing = function(){
+    console.log('nginit works');
+    var user = firebase.auth().currentUser;
+    console.log(user);
+
+
+    if (user != null) {
+      console.log(user.email);
+      console.log('user signed in successfully');
+      loginPopup.close();
+      var loginSuccessPopup = $ionicPopup.alert({
+        title: 'Login Successful!',
+        template: 'Welcome'
+      });
+    }
+  } */
 
   $scope.doLogout = function(){
       firebase.auth().signOut().then(function(){
