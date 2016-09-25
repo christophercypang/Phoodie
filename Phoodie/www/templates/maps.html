@@ -22,8 +22,12 @@
 			<div class='col-sm-2 choosebutton'>
 				<button class='btn btn-primary' ng-click='locationPopUp()'> Choose from a location </button>
 			</div> 
-			<div class='col-sm-2 loginbutton'>
+			<div class='col-sm-1 loginbutton'  ng-controller='UserCtrl'>
 				<button class='btn btn-primary' ng-click='loginPopUp()'> Login </button>
+			</div> 
+
+			<div class='col-sm-1 loginbutton' ng-controller='UserCtrl'>
+				<button class='btn btn-primary' ng-click='doLogout()'> Logout </button>
 			</div> 
 		</div>
 		<div id="map" data-tap-disabled="true"></div>

@@ -507,14 +507,14 @@ angular.module('phoodie.controllers', [])
       
 
         // Open the login modal
-        $scope.loginPopUp = function() {
+        /*$scope.loginPopUp = function() {
           $scope.data = {};
           var loginPopup = $ionicPopup.show({
           templateUrl: 'templates/login.html',
           title: 'Sign In',
           buttons: [
              { text: '', type: 'close-popup ion-ios-close-outline' }
-          ]
+          ] */
           
           /*buttons: [
                 {
@@ -531,9 +531,9 @@ angular.module('phoodie.controllers', [])
                     
                   }                
                 }] */
-         
+         /*
           });
-        }; 
+        }; */
 
       })
 
@@ -568,14 +568,45 @@ angular.module('phoodie.controllers', [])
 
               })
 
-.controller('UserCtrl', function($scope, $firebaseObject){
+
+
+.controller('UserCtrl', function($scope, $firebaseObject, $ionicPopup){
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
+
+  $scope.loginPopUp = function() {
+          $scope.data = {};
+          loginPopup = $ionicPopup.show({
+          templateUrl: 'templates/login.html',
+          title: 'Sign In',
+          buttons: [
+             { text: '', type: 'close-popup ion-ios-close-outline' }
+          ]
+          
+          /*buttons: [
+                {
+                    text: 'Cancel'
+                }, {
+                  text: '<b>Login</b>',
+                  type: 'button-positive',
+                  onTap: function(e){
+                    if (!$scope.email){
+                      e.preventDefault();
+                    } else {
+                      console.log('hello');
+                    }
+                    
+                  }                
+                }] */
+         
+          });
+        };
 
   $scope.doLogin = function(email, password){
     console.log(email);
     console.log(password);
 
+    
     firebase.auth().signInWithEmailAndPassword(email,password).catch(function(error){
       var errorCode = error.code;
       var errorMessage = errorMessage;
@@ -586,17 +617,26 @@ angular.module('phoodie.controllers', [])
         // user signed in
         console.log('user signed in successfully');
         console.log(user.email);
+        loginPopup.close();
       } else {
         // no user signed in
+        console.log('error user not signed in');
       }
     })
+
 
     /*
     var user = firebase.auth().currentUser;
     console.log(user); */
 
+  }
 
-
+  $scope.doLogout = function(){
+      firebase.auth().signOut().then(function(){
+        console.log('Successfully signed out');
+      }, function(error){
+        console.log('error happened');
+      })
   }
 
   $scope.createAccount = function(email,password){
