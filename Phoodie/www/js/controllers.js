@@ -543,6 +543,7 @@ angular.module('phoodie.controllers', [])
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
 
+
   $scope.takePhoto = function() {
     console.log('photo button clicked');
 
@@ -573,6 +574,9 @@ angular.module('phoodie.controllers', [])
 .controller('UserCtrl', function($scope, $firebaseObject, $ionicPopup){
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
+  var userEmail;
+  var user;
+  var loggedIn = 0;
 
   $scope.loginPopUp = function() {
           $scope.data = {};
@@ -602,42 +606,80 @@ angular.module('phoodie.controllers', [])
           });
         };
 
+
   $scope.doLogin = function(email, password){
     console.log(email);
     console.log(password);
-
-    var loggedIn = false;
-
     
     firebase.auth().signInWithEmailAndPassword(email,password).catch(function(error){
       var errorCode = error.code;
-      var errorMessage = errorMessage;
+      var errorMessage = error.message;
+      console.log(errorMessage);
     })
+    console.log('before login status');
+    $scope.loginStatus();
 
     //$scope.testing();
 
-    firebase.auth().onAuthStateChanged(function(user){
+    /*firebase.auth().onAuthStateChanged(function(user){
       if(user){
         // user signed in
         console.log('user signed in successfully');
         console.log(user.email);
-        loggedIn = true;
+        userEmail = user.email;
+        $scope.testing();
       } else {
         // no user signed in
         console.log('error user not signed in');
       }
-    })
+    }) */
 
-    loginPopup.close();
+    /*loginPopup.close();
         var loginSuccessPopup = $ionicPopup.alert({
           title: 'Login Successful!',
-          template: 'Welcome'
-    });
+          template: 'Welcome, ' + userEmail
+    });*/
 
     /*
     var user = firebase.auth().currentUser;
     console.log(user); */
 
+  }
+
+
+  $scope.loginStatus = function(){
+    console.log('in login status');
+      firebase.auth().onAuthStateChanged(function(user){
+        if(loggedIn == 0) {
+          console.log('checked logged in');
+          if(user){
+        // user signed in
+        console.log('user signed in successfully');
+        console.log(user.email);
+        userEmail = user.email;
+        loggedIn = 1;
+        $scope.testing();
+      } else {
+        // no user signed in
+
+        console.log('error user not signed in');
+      }
+
+        }
+      
+    })
+    
+  }
+
+
+  $scope.testing = function(){
+    loginPopup.close();
+
+        var loginSuccessPopup = $ionicPopup.alert({
+          title: 'Login Successful!',
+          template: 'Welcome, ' + userEmail
+    })
+       
   }
 
   /*
@@ -661,6 +703,7 @@ angular.module('phoodie.controllers', [])
   $scope.doLogout = function(){
       firebase.auth().signOut().then(function(){
         console.log('Successfully signed out');
+        loggedIn = 0;
       }, function(error){
         console.log('error happened');
       })
