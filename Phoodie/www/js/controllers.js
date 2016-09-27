@@ -690,11 +690,12 @@ angular.module('phoodie.controllers', [])
     $scope.accountButton = function(){
 
       var user = firebase.auth().currentUser;
-
-      if(user != null){
+      console.log(user);
+      if(user == null){
        $scope.loginPopUp();
+
       } else {
-        console.log('not logged in');
+        console.log('user logged in');
       }
    }
 
