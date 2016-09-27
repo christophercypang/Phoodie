@@ -504,7 +504,7 @@ angular.module('phoodie.controllers', [])
           });
         }
 
-        
+
 
         // Open the login modal
         /*$scope.loginPopUp = function() {
@@ -515,7 +515,7 @@ angular.module('phoodie.controllers', [])
           buttons: [
              { text: '', type: 'close-popup ion-ios-close-outline' }
              ] */
-             
+
           /*buttons: [
                 {
                     text: 'Cancel'
@@ -578,6 +578,7 @@ angular.module('phoodie.controllers', [])
   var user;
   var loggedIn = 0;
 
+
   $scope.loginPopUp = function() {
     $scope.data = {};
     loginPopup = $ionicPopup.show({
@@ -586,7 +587,7 @@ angular.module('phoodie.controllers', [])
       buttons: [
       { text: '', type: 'close-popup ion-ios-close-outline' }
       ]
-      
+
           /*buttons: [
                 {
                     text: 'Cancel'
@@ -602,7 +603,7 @@ angular.module('phoodie.controllers', [])
                     
                   }                
                 }] */
-                
+
               });
   };
 
@@ -657,7 +658,9 @@ angular.module('phoodie.controllers', [])
         console.log('user signed in successfully');
         console.log(user.email);
         userEmail = user.email;
+        console.log(loggedIn);
         loggedIn = 1;
+        console.log(loggedIn);
         $scope.afterLoginPopup();
       } else {
         // no user signed in
@@ -666,21 +669,34 @@ angular.module('phoodie.controllers', [])
       }
 
     }
-    
+
   })
     
   }
 
 
   $scope.afterLoginPopup = function(){
+    console.log('after popup loggedin ' + loggedIn);
     loginPopup.close();
 
     var loginSuccessPopup = $ionicPopup.alert({
       title: 'Login Successful!',
       template: 'Welcome, ' + userEmail
     })
-    
+
   }
+
+
+    $scope.accountButton = function(){
+
+      var user = firebase.auth().currentUser;
+
+      if(user != null){
+       $scope.loginPopUp();
+      } else {
+        console.log('not logged in');
+      }
+   }
 
   /*
   $scope.testing = function(){
