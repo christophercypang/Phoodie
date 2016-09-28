@@ -571,7 +571,7 @@ angular.module('phoodie.controllers', [])
 
 
 
-.controller('UserCtrl', function($scope, $firebaseObject, $ionicPopup){
+.controller('UserCtrl', function($scope, $firebaseObject, $ionicPopup, $window){
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
   var userEmail;
@@ -695,7 +695,7 @@ angular.module('phoodie.controllers', [])
        $scope.loginPopUp();
 
       } else {
-        console.log('user logged in');
+        $window.location.href = '#/tab/account';
       }
    }
 
