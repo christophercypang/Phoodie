@@ -505,6 +505,12 @@ angular.module('phoodie.controllers', [])
         }
 
 
+        $scope.getUser() = function() {
+          var user = firebase.auth().currentUser;
+          console.log(user);
+        }
+
+
 
         // Open the login modal
         /*$scope.loginPopUp = function() {
