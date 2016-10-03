@@ -36,9 +36,20 @@ angular.module('phoodie.controllers', [])
                 center: myLatlng,
                 zoom: 16,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
-            };          
+            };  
              
-            var map = new google.maps.Map(document.getElementById("map"), mapOptions);          
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
+
+            
+            var circle = new google.maps.Circle({
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.1,
+              strokeWeight: 0,
+              fillOpacity: 0.1,
+              map: map,
+              center: {lat: lat, lng: long},
+              radius: 250
+            })        
              
             $scope.map = map;   
             $ionicLoading.hide();           
@@ -94,6 +105,7 @@ angular.module('phoodie.controllers', [])
             map = new google.maps.Map(
               document.getElementById("map"), options
               );
+
 
             cityCircle = new google.maps.Circle({
               strokeColor: '#FF0000',
