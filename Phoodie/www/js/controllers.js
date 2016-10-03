@@ -19,6 +19,8 @@ angular.module('phoodie.controllers', [])
     $ionicLoading.show({
             template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
         });
+
+        var infoWindow = new google.maps.InfoWindow({map: map});
          
         var posOptions = {
             enableHighAccuracy: true,
@@ -27,8 +29,15 @@ angular.module('phoodie.controllers', [])
         };
  
         $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-            var lat  = position.coords.latitude;
-            var long = position.coords.longitude;
+
+            //TIMES SQUARE LAT LONG
+            var lat = 22.2782;
+            var long = 114.1817;
+
+
+            // ACTUAL LAT LONG
+            //var lat  = position.coords.latitude;
+            //var long = position.coords.longitude;
              
             var myLatlng = new google.maps.LatLng(lat, long);
              
@@ -40,7 +49,7 @@ angular.module('phoodie.controllers', [])
              
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
 
-            
+
             var circle = new google.maps.Circle({
               strokeColor: '#FF0000',
               strokeOpacity: 0.1,
@@ -49,7 +58,82 @@ angular.module('phoodie.controllers', [])
               map: map,
               center: {lat: lat, lng: long},
               radius: 250
-            })        
+            }) 
+
+            var restaurants = {
+              location: {lat: lat, lng: long},
+              radius: '250',
+              types: ['restaurant']
+            }
+
+            var service = new google.maps.places.PlacesService(map);
+            var placeName = [];
+            var placeLocation = [];
+            var placeDetails = [];
+
+            service.nearbySearch(restaurants, function(results, status) {
+
+              if (status == google.maps.places.PlacesServiceStatus.OK) {
+                //while(pagination.hasNextPage) {
+                  //pagination.nextPage();
+                  for(var i = 0; i < results.length; i++) {
+                    var place = results[i];
+                    console.log(place);
+                    placeDetails[i] = i + ',' + place.name + ',' + place.vicinity;
+                    placeName.push(place.name);
+                    placeLocation.push(place.vicinity);
+                  //console.log(place.name, place.vicinity);
+                 // console.log(place);
+                 //console.log(placeDetails[i]);
+
+                 var marker = new google.maps.Marker({
+                  map: map,
+                  position: place.geometry.location
+                });
+
+                 //add marker to the markers array
+                 markers.push(marker);
+
+
+                 (function (marker, place) {
+                  google.maps.event.addListener(marker, "click", function () {
+                    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
+                    infoWindow.setContent(place.name);
+                    infoWindow.open(map, marker);
+                    console.log(place.id);
+
+                    var uniqueid = place.id;
+
+                    var getData = firebase.database().ref('restaurants/' + uniqueid).once('value', function(snapshot){
+                      var restaurantResult = JSON.stringify(snapshot.val());
+                      console.log(restaurantResult);
+
+                      if (restaurantResult == 'null'){
+                        console.log('NO DATA YET');
+                        firebase.database().ref('restaurants/' + uniqueid).set({
+                        //"UniqueID": place.id,
+                        "Restaurant Name": place.name
+                      });
+                      } else {
+                        console.log('GET DATA SUCCESS', restaurantResult);
+                      }
+                    });
+
+
+                  });
+                })(marker, place);
+
+
+              }
+             //}
+           }
+         })
+
+
+
+
+
+
              
             $scope.map = map;   
             $ionicLoading.hide();           
