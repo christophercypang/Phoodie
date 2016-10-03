@@ -505,7 +505,7 @@ angular.module('phoodie.controllers', [])
         }
 
 
-        $scope.getUser() = function() {
+        $scope.getUser = function() {
           var user = firebase.auth().currentUser;
           console.log(user);
         }
