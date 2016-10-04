@@ -17,18 +17,18 @@ angular.module('phoodie.controllers', [])
 
   ionic.Platform.ready(function(){
     $ionicLoading.show({
-            template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
-        });
+      template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
+    });
 
-        var infoWindow = new google.maps.InfoWindow({map: map});
-         
-        var posOptions = {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 0
-        };
- 
-        $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+    var infoWindow = new google.maps.InfoWindow({map: map});
+
+    var posOptions = {
+      enableHighAccuracy: true,
+      timeout: 20000,
+      maximumAge: 0
+    };
+
+    $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
 
             //TIMES SQUARE LAT LONG
             var lat = 22.2782;
@@ -38,15 +38,15 @@ angular.module('phoodie.controllers', [])
             // ACTUAL LAT LONG
             //var lat  = position.coords.latitude;
             //var long = position.coords.longitude;
-             
+
             var myLatlng = new google.maps.LatLng(lat, long);
-             
+
             var mapOptions = {
-                center: myLatlng,
-                zoom: 16,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+              center: myLatlng,
+              zoom: 17,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
             };  
-             
+
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
 
 
@@ -134,24 +134,24 @@ angular.module('phoodie.controllers', [])
 
 
 
-             
+
             $scope.map = map;   
             $ionicLoading.hide();           
-             
-        }, function(err) {
+
+          }, function(err) {
             $ionicLoading.hide();
             console.log(err);
-        });
-    })
+          });
+  })
 
 
-  $scope.initialize = function() {
+$scope.initialize = function() {
 
-    geocoder = new google.maps.Geocoder();
+  geocoder = new google.maps.Geocoder();
 
 
-    var thisLat = 0;
-    var thisLng = 0;
+  var thisLat = 0;
+  var thisLng = 0;
 
     /*map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: -34.397, lng: 150.644},
@@ -181,7 +181,7 @@ angular.module('phoodie.controllers', [])
             
             var options = {
               center: new google.maps.LatLng(thisLat, thisLng),
-              zoom: 15,
+              zoom: 17,
               disableDefaultUI: false    
             } 
 
@@ -325,21 +325,140 @@ angular.module('phoodie.controllers', [])
     )}
 
 
-
-
-
         $scope.searchLocation = function() {
 
-          $scope.initAutocomplete();
           console.log(newLocation);
+          var myLatlng = newLocation.geometry.location;
+          console.log(myLatlng);
+
+          var infoWindow = new google.maps.InfoWindow({map: map});
+
+
+          var posOptions = {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 0
+          };
+
+          $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+
+            var mapOptions = {
+              center: myLatlng,
+              zoom: 17,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            };  
+
+            var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
+
+
+            var circle = new google.maps.Circle({
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.1,
+              strokeWeight: 0,
+              fillOpacity: 0.1,
+              map: map,
+              center: myLatlng,
+              radius: 250
+            }) 
+
+            var restaurants = {
+              location: myLatlng,
+              radius: '250',
+              types: ['restaurant']
+            }
+
+            var service = new google.maps.places.PlacesService(map);
+            var placeName = [];
+            var placeLocation = [];
+            var placeDetails = [];
+
+            service.nearbySearch(restaurants, function(results, status) {
+
+              if (status == google.maps.places.PlacesServiceStatus.OK) {
+                //while(pagination.hasNextPage) {
+                  //pagination.nextPage();
+                  for(var i = 0; i < results.length; i++) {
+                    var place = results[i];
+                    console.log(place);
+                    placeDetails[i] = i + ',' + place.name + ',' + place.vicinity;
+                    placeName.push(place.name);
+                    placeLocation.push(place.vicinity);
+                  //console.log(place.name, place.vicinity);
+                 // console.log(place);
+                 //console.log(placeDetails[i]);
+
+                 var marker = new google.maps.Marker({
+                  map: map,
+                  position: place.geometry.location
+                });
+
+                 //add marker to the markers array
+                 markers.push(marker);
+
+
+                 (function (marker, place) {
+                  google.maps.event.addListener(marker, "click", function () {
+                    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
+                    infoWindow.setContent(place.name);
+                    infoWindow.open(map, marker);
+                    console.log(place.id);
+
+                    var uniqueid = place.id;
+
+                    var getData = firebase.database().ref('restaurants/' + uniqueid).once('value', function(snapshot){
+                      var restaurantResult = JSON.stringify(snapshot.val());
+                      console.log(restaurantResult);
+
+                      if (restaurantResult == 'null'){
+                        console.log('NO DATA YET');
+                        firebase.database().ref('restaurants/' + uniqueid).set({
+                        //"UniqueID": place.id,
+                        "Restaurant Name": place.name
+                      });
+                      } else {
+                        console.log('GET DATA SUCCESS', restaurantResult);
+                      }
+                    });
+
+
+                  });
+                })(marker, place);
+
+
+              }
+             //}
+           }
+         })
+
+
+
+
+
+
+
+            $scope.map = map;   
+            $ionicLoading.hide();           
+
+          }, function(err) {
+            $ionicLoading.hide();
+            console.log(err);
+          });
+
+
+
+
+          /*
 
           var infoWindow = new google.maps.InfoWindow({map: map});
 
           var newLatLng = newLocation.geometry.location;
           console.log(newLatLng);
 
-          map.setZoom(18);
-          map.setCenter(newLatLng);
+          var options = {
+              center: newLatLng,
+              zoom: 15,
+              disableDefaultUI: false    
+            } 
 
           if(cityCircle != undefined) {
             cityCircle.setMap(null);
@@ -430,7 +549,7 @@ angular.module('phoodie.controllers', [])
               }
              //}
            }
-         })
+         }) */
 
 
           /*
@@ -818,17 +937,17 @@ angular.module('phoodie.controllers', [])
   }
 
 
-    $scope.accountButton = function(){
+  $scope.accountButton = function(){
 
-      var user = firebase.auth().currentUser;
-      console.log(user);
-      if(user == null){
-       $scope.loginPopUp();
+    var user = firebase.auth().currentUser;
+    console.log(user);
+    if(user == null){
+     $scope.loginPopUp();
 
-      } else {
-        $window.location.href = '#/tab/account';
-      }
-   }
+   } else {
+    $window.location.href = '#/tab/account';
+  }
+}
 
   /*
   $scope.testing = function(){
