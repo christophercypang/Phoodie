@@ -1,7 +1,7 @@
 {
-  "name": "hashtag",
+  "name": "Phoodie",
   "version": "1.1.1",
-  "description": "HashTag: An Ionic project",
+  "description": "Phoodie: An Ionic project",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",
