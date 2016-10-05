@@ -10,12 +10,14 @@ angular.module('phoodie.controllers', [])
   var newLocation;
   var cityCircle;
   var markers = [];
+  var placeCalled;
 
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
 
 
-  ionic.Platform.ready(function(){
+  $scope.initialize = function() {
+
     $ionicLoading.show({
       template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
     });
@@ -49,14 +51,13 @@ angular.module('phoodie.controllers', [])
 
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
 
-
             var circle = new google.maps.Circle({
               strokeColor: '#FF0000',
               strokeOpacity: 0.1,
               strokeWeight: 0,
               fillOpacity: 0.1,
               map: map,
-              center: {lat: lat, lng: long},
+              center: myLatlng,
               radius: 250
             }) 
 
@@ -74,282 +75,274 @@ angular.module('phoodie.controllers', [])
             service.nearbySearch(restaurants, function(results, status) {
 
               if (status == google.maps.places.PlacesServiceStatus.OK) {
-                //while(pagination.hasNextPage) {
-                  //pagination.nextPage();
-                  for(var i = 0; i < results.length; i++) {
-                    var place = results[i];
-                    console.log(place);
-                    placeDetails[i] = i + ',' + place.name + ',' + place.vicinity;
-                    placeName.push(place.name);
-                    placeLocation.push(place.vicinity);
-                  //console.log(place.name, place.vicinity);
-                 // console.log(place);
-                 //console.log(placeDetails[i]);
+                          //while(pagination.hasNextPage) {
+                            //pagination.nextPage();
+                            for(var i = 0; i < results.length; i++) {
+                              var place = results[i];
+                              console.log(place);
+                              placeDetails[i] = i + ',' + place.name + ',' + place.vicinity;
+                              placeName.push(place.name);
+                              placeLocation.push(place.vicinity);
+                            //console.log(place.name, place.vicinity);
+                           // console.log(place);
+                           //console.log(placeDetails[i]);
 
-                 var marker = new google.maps.Marker({
-                  map: map,
-                  position: place.geometry.location
+                           var marker = new google.maps.Marker({
+                            map: map,
+                            position: place.geometry.location
+                          });
+
+                           //add marker to the markers array
+                           markers.push(marker);
+
+
+                           (function (marker, place) {
+                            google.maps.event.addListener(marker, "click", function () {
+                              //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
+
+                              var contentString = '<div id="content">'+
+                              '<div id="siteNotice">'+
+                              '</div>'+
+                              '<h4 id="firstHeading" class="firstHeading">'+place.name+'</h4>'+
+                              '<div id="bodyContent">'+
+                              '<p>' + place.vicinity + '</p>'+
+                              '</div>'+
+                              '</div>';
+
+                              infoWindow.setContent(contentString);
+                              //infoWindow.setContent(place.vicinity);
+                              infoWindow.open(map, marker);
+                              console.log(place.id);
+
+                              var uniqueid = place.id;
+
+                              var getData = firebase.database().ref('restaurants/' + uniqueid).once('value', function(snapshot){
+                                var restaurantResult = JSON.stringify(snapshot.val());
+                                console.log(restaurantResult);
+
+                                if (restaurantResult == 'null'){
+                                  console.log('NO DATA YET');
+                                  firebase.database().ref('restaurants/' + uniqueid).set({
+                                  //"UniqueID": place.id,
+                                  "Restaurant Name": place.name
+                                });
+                                } else {
+                                  console.log('GET DATA SUCCESS', restaurantResult);
+                                }
+                              });
+
+
+                            });
+                          })(marker, place);
+
+
+                        }
+                       //}
+                     }
+                   })
+
+
+
+
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function() {
+              searchBox.setBounds(map.getBounds());
+            });
+
+            var markers = [];
+            // [START region_getplaces]
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener('places_changed', function() {
+              var places = searchBox.getPlaces();
+
+              if (places.length == 0) {
+                return;
+              }
+
+              // Clear out the old markers.
+              markers.forEach(function(marker) {
+                marker.setMap(null);
+              });
+              markers = [];
+
+              circle.setMap(null);
+
+              // For each place, get the icon, name and location.
+              var bounds = new google.maps.LatLngBounds();
+              places.forEach(function(place) {
+                bounds.extend(place.geometry.location);
+                var listener = google.maps.event.addListener(map, "idle", function() { 
+                  if (map.getZoom() > 17) map.setZoom(17); 
+                  google.maps.event.removeListener(listener); 
                 });
 
-                 //add marker to the markers array
-                 markers.push(marker);
+                map.fitBounds(bounds);
+
+                var circle = new google.maps.Circle({
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 0.1,
+                  strokeWeight: 0,
+                  fillOpacity: 0.1,
+                  map: map,
+                  center: place.geometry.location,
+                  radius: 250
+                }) 
+
+                var restaurants = {
+                  location: place.geometry.location,
+                  radius: '250',
+                  types: ['restaurant']
+                }
+
+                var service = new google.maps.places.PlacesService(map);
+                var placeName = [];
+                var placeLocation = [];
+                var placeDetails = [];
+
+                service.nearbySearch(restaurants, function(results, status) {
+
+                  if (status == google.maps.places.PlacesServiceStatus.OK) {
+                          //while(pagination.hasNextPage) {
+                            //pagination.nextPage();
+                            for(var i = 0; i < results.length; i++) {
+                              var place = results[i];
+                              console.log(place);
+                              placeDetails[i] = i + ',' + place.name + ',' + place.vicinity;
+                              placeName.push(place.name);
+                              placeLocation.push(place.vicinity);
+                            //console.log(place.name, place.vicinity);
+                           // console.log(place);
+                           //console.log(placeDetails[i]);
+
+                           var marker = new google.maps.Marker({
+                            map: map,
+                            position: place.geometry.location
+                          });
+
+                           //add marker to the markers array
+                           markers.push(marker);
 
 
-                 (function (marker, place) {
-                  google.maps.event.addListener(marker, "click", function () {
-                    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
-                    infoWindow.setContent(place.name);
-                    infoWindow.open(map, marker);
-                    console.log(place.id);
+                           (function (marker, place) {
+                            google.maps.event.addListener(marker, "click", function () {
+                              //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
 
-                    var uniqueid = place.id;
+                              var contentString = '<div id="content">'+
+                              '<div id="siteNotice">'+
+                              '</div>'+
+                              '<h4 id="firstHeading" class="firstHeading">'+place.name+'</h4>'+
+                              '<div id="bodyContent">'+
+                              '<p>' + place.vicinity + '</p>'+
+                              '</div>'+
+                              '</div>';
 
-                    var getData = firebase.database().ref('restaurants/' + uniqueid).once('value', function(snapshot){
-                      var restaurantResult = JSON.stringify(snapshot.val());
-                      console.log(restaurantResult);
+                              infoWindow.setContent(contentString);
+                              //infoWindow.setContent(place.vicinity);
+                              infoWindow.open(map, marker);
+                              console.log(place.id);
 
-                      if (restaurantResult == 'null'){
-                        console.log('NO DATA YET');
-                        firebase.database().ref('restaurants/' + uniqueid).set({
-                        //"UniqueID": place.id,
-                        "Restaurant Name": place.name
-                      });
-                      } else {
-                        console.log('GET DATA SUCCESS', restaurantResult);
-                      }
-                    });
+                              var uniqueid = place.id;
 
+                              var getData = firebase.database().ref('restaurants/' + uniqueid).once('value', function(snapshot){
+                                var restaurantResult = JSON.stringify(snapshot.val());
+                                console.log(restaurantResult);
 
-                  });
-                })(marker, place);
-
-
-              }
-             //}
-           }
-         })
-
-
-
+                                if (restaurantResult == 'null'){
+                                  console.log('NO DATA YET');
+                                  firebase.database().ref('restaurants/' + uniqueid).set({
+                                  //"UniqueID": place.id,
+                                  "Restaurant Name": place.name
+                                });
+                                } else {
+                                  console.log('GET DATA SUCCESS', restaurantResult);
+                                }
+                              });
 
 
+                            });
+                          })(marker, place);
 
 
-            $scope.map = map;   
-            $ionicLoading.hide();           
-
-          }, function(err) {
-            $ionicLoading.hide();
-            console.log(err);
+                        }
+                       //}
+                     }
+                   })
+                
+              });
           });
-  })
 
 
-$scope.initialize = function() {
+                   $scope.map = map;   
+                   $ionicLoading.hide();           
 
-  geocoder = new google.maps.Geocoder();
-
-
-  var thisLat = 0;
-  var thisLng = 0;
-
-    /*map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: -34.397, lng: 150.644},
-      zoom: 6
-    });*/
-
-    var infoWindow = new google.maps.InfoWindow({map: map});
-
-        // Try HTML5 geolocation.
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-
-            // HERE IS THE GPS SHIT
-
-            thisLat = pos.lat;
-            thisLng = pos.lng;
-
-            //thisLat = 22.2782;
-            //thisLng = 114.1817;
-
-            //console.log(thisLat, thisLng);
-
-            
-            var options = {
-              center: new google.maps.LatLng(thisLat, thisLng),
-              zoom: 17,
-              disableDefaultUI: false    
-            } 
+                 }, function(err) {
+                  $ionicLoading.hide();
+                  console.log(err);
+                });
 
 
-            map = new google.maps.Map(
-              document.getElementById("map"), options
-              );
+}
 
 
-            cityCircle = new google.maps.Circle({
-              strokeColor: '#FF0000',
-              strokeOpacity: 0.1,
-              strokeWeight: 0,
-              fillOpacity: 0.1,
-              map: map,
-              center: {lat: thisLat, lng: thisLng},
-              radius: 250
+$scope.searchLocation = function() {
+
+  //console.log(newLocation);
+  //var myLatlng = newLocation.geometry.location;
+  console.log(placeCalled[0]);
+  var myLatlng = placeCalled[0].geometry.location;
+  console.log(myLatlng);
+
+  var infoWindow = new google.maps.InfoWindow({map: map});
+
+  var posOptions = {
+    enableHighAccuracy: true,
+    timeout: 20000,
+    maximumAge: 0
+  };
+
+  $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+
+    var mapOptions = {
+      center: myLatlng,
+      zoom: 17,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };  
+
+    var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
+
+    var input = document.getElementById('pac-input');
+    var searchBox = new google.maps.places.SearchBox(input);
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function() {
+              searchBox.setBounds(map.getBounds());
+            });
+
+            var markers = [];
+            // [START region_getplaces]
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener('places_changed', function() {
+              var places = searchBox.getPlaces();
+
+              if (places.length == 0) {
+                return;
+              }
+
+              var bounds = new google.maps.LatLngBounds();
+              console.log(bounds);
+
+
+              places.forEach(function(place) {
+                placeCalled = places;
+              });
             })
-
-
-            var restaurants = {
-              location: {lat: thisLat, lng: thisLng},
-              radius: '250',
-              types: ['restaurant']
-            }
-
-            var service = new google.maps.places.PlacesService(map);
-            var placeName = [];
-            var placeLocation = [];
-            var placeDetails = [];
-
-            service.nearbySearch(restaurants, function(results, status) {
-
-              if (status == google.maps.places.PlacesServiceStatus.OK) {
-                //while(pagination.hasNextPage) {
-                  //pagination.nextPage();
-                  for(var i = 0; i < results.length; i++) {
-                    var place = results[i];
-                    console.log(place);
-                    placeDetails[i] = i + ',' + place.name + ',' + place.vicinity;
-                    placeName.push(place.name);
-                    placeLocation.push(place.vicinity);
-                  //console.log(place.name, place.vicinity);
-                 // console.log(place);
-                 //console.log(placeDetails[i]);
-
-                 var marker = new google.maps.Marker({
-                  map: map,
-                  position: place.geometry.location
-                });
-
-                 //add marker to the markers array
-                 markers.push(marker);
-
-
-                 (function (marker, place) {
-                  google.maps.event.addListener(marker, "click", function () {
-
-                    firebase.database().ref('restaurants/').set({
-                      restaurantID: place.id,
-                    });
-
-                    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
-                    infoWindow.setContent(place.name);
-                    infoWindow.open(map, marker);
-                    console.log(place.id);
-                    
-                  });
-                })(marker, place);
-
-              }
-             //}
-           }
-         })
-
-            /*
-
-
-            var pinColor = "76EE00";
-            var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
-              new google.maps.Size(21, 34),
-              new google.maps.Point(0,0),
-              new google.maps.Point(10, 34));
-
-            var marker = new google.maps.Marker({
-              //position: {lat: thisLat, lng: thisLng},
-              map: map,
-              icon: pinImage,
-            }) */
-
-
-
-            /*marker.setPlace({
-              placeId: '86ceae61e4144edd24ae50a4cfca242ec6cddde5'
-              location: 
-            }) */
-
-
-
-        //this.places = new google.maps.places.PlacesService(map);
-
-        //console.log('test ' + pos.lat)
-
-
-
-      })
-        }
-      }
-
-      $scope.onPlaceChanged = function() {
-        var place = autocomplete.getPlace();
-        console.log(place);
-      }
-
-
-      $scope.initAutocomplete = function() {
-
-        autocomplete = new google.maps.places.Autocomplete(
-          (document.getElementById('autocomplete')),
-          {
-            types: ['establishment'],
-            componentRestrictions: {country: "hk"}
-          });
-
-        autocomplete.addListener('place_changed', function() {
-        //infowindow.close();
-        //marker.setVisible(false);
-        var place = autocomplete.getPlace();
-        newLocation = place;
-        //console.log(newLocation);
-        /*console.log(place);
-        console.log(place.id);*/
-
-        /*
-        var marker = new google.maps.Marker({
-        map: map,
-        position: place.geometry.location
-      })*/
-
-    }
-    )}
-
-
-        $scope.searchLocation = function() {
-
-          console.log(newLocation);
-          var myLatlng = newLocation.geometry.location;
-          console.log(myLatlng);
-
-          var infoWindow = new google.maps.InfoWindow({map: map});
-
-
-          var posOptions = {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 0
-          };
-
-          $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-
-            var mapOptions = {
-              center: myLatlng,
-              zoom: 17,
-              mapTypeId: google.maps.MapTypeId.ROADMAP
-            };  
-
-            var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
-
 
             var circle = new google.maps.Circle({
               strokeColor: '#FF0000',
@@ -372,6 +365,9 @@ $scope.initialize = function() {
             var placeLocation = [];
             var placeDetails = [];
 
+
+
+
             service.nearbySearch(restaurants, function(results, status) {
 
               if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -430,12 +426,6 @@ $scope.initialize = function() {
            }
          })
 
-
-
-
-
-
-
             $scope.map = map;   
             $ionicLoading.hide();           
 
@@ -446,287 +436,114 @@ $scope.initialize = function() {
 
 
 
+}
 
-          /*
+$scope.locationPopUp = function() {
 
-          var infoWindow = new google.maps.InfoWindow({map: map});
+  $scope.data = {};
 
-          var newLatLng = newLocation.geometry.location;
-          console.log(newLatLng);
+  console.log('in popup');
+  myPopup = $ionicPopup.show({
+    title: 'Choose your location',
+    template: '<ion-list><ion-item ng-click="sortLocation(1)">Central and Western</ion-item>'+
+    '<ion-item ng-click="sortLocation(2)">Wan Chai</ion-item>'+
+    '<ion-item ng-click="sortLocation(3)">Eastern</ion-item>'+
+    '<ion-item ng-click="sortLocation(4)">Southern</ion-item>'+
+    '<ion-item ng-click="sortLocation(5)">Yau Tsim Mong</ion-item>'+
+    '<ion-item ng-click="sortLocation(6)">Kowloon City</ion-item>'+
+    '<ion-item ng-click="sortLocation(7)">Sham Shui Po</ion-item>'+
+    '<ion-item ng-click="sortLocation(8)">Wong Tai Sin</ion-item>'+
+    '<ion-item ng-click="sortLocation(9)">Kwun Tong</ion-item>'+
+    '<ion-item ng-click="sortLocation(10)">Sai Kung</ion-item>'+
+    '<ion-item ng-click="sortLocation(11)">Shatin</ion-item>'+
+    '<ion-item ng-click="sortLocation(12)">Kwai Chung</ion-item>'+
+    '<ion-item ng-click="sortLocation(13)">Tsuen Wan</ion-item>'+
+    '<ion-item ng-click="sortLocation(14)">Tai Po</ion-item>'+
+    '<ion-item ng-click="sortLocation(15)">Tuen Mun</ion-item>'+
+    '<ion-item ng-click="sortLocation(16)">North</ion-item>'+
+    '<ion-item ng-click="sortLocation(17)">Yuen Long</ion-item>'+
+    '<ion-item ng-click="sortLocation(18)">Islands</ion-item></ion-list>',
+    scope: $scope,
+    buttons: [
+    {text: 'Cancel'},
+    ]
+  })
+}
 
-          var options = {
-              center: newLatLng,
-              zoom: 15,
-              disableDefaultUI: false    
-            } 
+$scope.sortLocation = function(args) {
+  console.log(args);
 
-          if(cityCircle != undefined) {
-            cityCircle.setMap(null);
-          }
+  myPopup.close();
 
-          if(markers != null){
-            for (var i = 0; i < markers.length; i++){
-              markers[i].setMap(null);
-            }
-            markers = [];
-          }
+  var district;
 
+  switch(args) {
+    case 1:
+    district = 'Hollywood Road Hong Kong';
+    break;
+    case 2:
+    district = 'Wan Chai Hong Kong';
+    break;
+    case 3:
+    district = 'Tai Koo Shing Hong Kong';
+    break;
+    case 4: 
+    district = 'Stanley Hong Kong';
+    break;
+    case 5:
+    district = 'Tsim Sha Tsui Hong Kong';
+    break;
+    case 6:
+    district = 'Kowloon City Hong Kong';
+    break;
+    case 7:
+    district = 'Sham Shui Po Hong Kong';
+    break;
+    case 8:
+    district = 'Chuk Un Hong Kong';
+    break;
+    case 9:
+    district = 'Kwun Tong Hong Kong';
+    break;
+    case 10:
+    district = 'Sai Kung Hong Kong';
+    break;
+    case 11:
+    district = 'Shatin Hong Kong';
+    break;
+    case 12:
+    district = 'Kwai Chung Hong Kong';
+    break;
+    case 13:
+    district = 'Tsuen Wan Hong Kong';
+    break;
+    case 14:
+    district = 'Tai Po Hong Kong';
+    break;
+    case 15:
+    district = 'Tuen Mun Hong Kong';
+    break;
+    case 16: 
+    district = 'Sheung Shui Hong Kong';
+    break;
+    case 17:
+    district = 'Yuen Long Hong Kong';
+    break;
+    case 18:
+    district = 'Tung Chung Hong Kong';
+    break;
+    default:
+    district = 'Central Hong Kong';
+  }
 
-          cityCircle = new google.maps.Circle({
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.1,
-            strokeWeight: 0,
-            fillOpacity: 0.1,
-            map: map,
-            center: newLatLng,
-            radius: 250
-          })
+  geocoder.geocode( { 'address': district}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      console.log(results[0]);
 
+      var location = results[0].geometry.location;
 
-          var restaurants = {
-            location: newLatLng,
-            radius: '250',
-            types: ['restaurant']
-          }
-
-
-          var service = new google.maps.places.PlacesService(map);
-          var placeName = [];
-          var placeLocation = [];
-          var placeDetails = [];
-
-          service.nearbySearch(restaurants, function(results, status) {
-
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-                //while(pagination.hasNextPage) {
-                  //pagination.nextPage();
-                  for(var i = 0; i < results.length; i++) {
-                    var place = results[i];
-                    console.log(place);
-                    placeDetails[i] = i + ',' + place.name + ',' + place.vicinity;
-                    placeName.push(place.name);
-                    placeLocation.push(place.vicinity);
-                  //console.log(place.name, place.vicinity);
-                 // console.log(place);
-                 //console.log(placeDetails[i]);
-
-                 var marker = new google.maps.Marker({
-                  map: map,
-                  position: place.geometry.location
-                });
-
-                 //add marker to the markers array
-                 markers.push(marker);
-
-                 (function (marker, place) {
-                  google.maps.event.addListener(marker, "click", function () {
-                    //Wrap the content inside an HTML DIV in order to set height and width of InfoWindow.
-                    infoWindow.setContent(place.name);
-                    infoWindow.open(map, marker);
-                    console.log(place.id);
-
-                    var uniqueid = place.id;
-
-                    var getData = firebase.database().ref('restaurants/' + uniqueid).once('value', function(snapshot){
-                      var restaurantResult = JSON.stringify(snapshot.val());
-                      console.log(restaurantResult);
-
-                      if (restaurantResult == 'null'){
-                        console.log('NO DATA YET');
-                        firebase.database().ref('restaurants/' + uniqueid).set({
-                        //"UniqueID": place.id,
-                        "Restaurant Name": place.name
-                      });
-                      } else {
-                        console.log('GET DATA SUCCESS', restaurantResult);
-                      }
-                    });
-
-
-                  });
-                })(marker, place);
-
-              }
-             //}
-           }
-         }) */
-
-
-          /*
-
-          geocoder.geocode( { 'address': searchPlace}, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-              console.log(results[0]);
-
-              var location = results[0].geometry.location;
-              console.log(location);
-
-              map.setZoom(15);
-              map.setCenter(location);
-
-              var cityCircle = new google.maps.Circle({
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.1,
-                strokeWeight: 0,
-                fillOpacity: 0.1,
-                map: map,
-                center: location,
-                radius: 500
-              })
-
-
-              var restaurants = {
-                location: location,
-                radius: '500',
-                types: ['restaurant']
-              }
-
-
-
-
-
-              var service = new google.maps.places.PlacesService(map);
-
-              service.nearbySearch(restaurants, function(results, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
-
-                  var amount = 0;
-                  for(var i = 0; i < results.length; i++) {
-                    var place = results[i];
-                  //console.log(place.name, place.vicinity);
-                  console.log(place);
-
-                  var marker = new google.maps.Marker({
-                    map: map,
-                    position: place.geometry.location
-                  });
-
-                  amount++;
-                  console.log(amount);
-                }
-              }
-            })
-
-
-              var marker = new google.maps.Marker({
-                map: map,
-                position: results[0].geometry.location
-              }); 
-            }
-          })
-
-          //var center = results[0].geometry.location;
-          //map.panTo(center); */
-
-
-        }
-
-        $scope.locationPopUp = function() {
-
-          $scope.data = {};
-
-          console.log('in popup');
-          myPopup = $ionicPopup.show({
-            title: 'Choose your location',
-            template: '<ion-list><ion-item ng-click="sortLocation(1)">Central and Western</ion-item>'+
-            '<ion-item ng-click="sortLocation(2)">Wan Chai</ion-item>'+
-            '<ion-item ng-click="sortLocation(3)">Eastern</ion-item>'+
-            '<ion-item ng-click="sortLocation(4)">Southern</ion-item>'+
-            '<ion-item ng-click="sortLocation(5)">Yau Tsim Mong</ion-item>'+
-            '<ion-item ng-click="sortLocation(6)">Kowloon City</ion-item>'+
-            '<ion-item ng-click="sortLocation(7)">Sham Shui Po</ion-item>'+
-            '<ion-item ng-click="sortLocation(8)">Wong Tai Sin</ion-item>'+
-            '<ion-item ng-click="sortLocation(9)">Kwun Tong</ion-item>'+
-            '<ion-item ng-click="sortLocation(10)">Sai Kung</ion-item>'+
-            '<ion-item ng-click="sortLocation(11)">Shatin</ion-item>'+
-            '<ion-item ng-click="sortLocation(12)">Kwai Chung</ion-item>'+
-            '<ion-item ng-click="sortLocation(13)">Tsuen Wan</ion-item>'+
-            '<ion-item ng-click="sortLocation(14)">Tai Po</ion-item>'+
-            '<ion-item ng-click="sortLocation(15)">Tuen Mun</ion-item>'+
-            '<ion-item ng-click="sortLocation(16)">North</ion-item>'+
-            '<ion-item ng-click="sortLocation(17)">Yuen Long</ion-item>'+
-            '<ion-item ng-click="sortLocation(18)">Islands</ion-item></ion-list>',
-            scope: $scope,
-            buttons: [
-            {text: 'Cancel'},
-            ]
-          })
-        }
-
-        $scope.sortLocation = function(args) {
-          console.log(args);
-
-          myPopup.close();
-
-          var district;
-
-          switch(args) {
-            case 1:
-            district = 'Hollywood Road Hong Kong';
-            break;
-            case 2:
-            district = 'Wan Chai Hong Kong';
-            break;
-            case 3:
-            district = 'Tai Koo Shing Hong Kong';
-            break;
-            case 4: 
-            district = 'Stanley Hong Kong';
-            break;
-            case 5:
-            district = 'Tsim Sha Tsui Hong Kong';
-            break;
-            case 6:
-            district = 'Kowloon City Hong Kong';
-            break;
-            case 7:
-            district = 'Sham Shui Po Hong Kong';
-            break;
-            case 8:
-            district = 'Chuk Un Hong Kong';
-            break;
-            case 9:
-            district = 'Kwun Tong Hong Kong';
-            break;
-            case 10:
-            district = 'Sai Kung Hong Kong';
-            break;
-            case 11:
-            district = 'Shatin Hong Kong';
-            break;
-            case 12:
-            district = 'Kwai Chung Hong Kong';
-            break;
-            case 13:
-            district = 'Tsuen Wan Hong Kong';
-            break;
-            case 14:
-            district = 'Tai Po Hong Kong';
-            break;
-            case 15:
-            district = 'Tuen Mun Hong Kong';
-            break;
-            case 16: 
-            district = 'Sheung Shui Hong Kong';
-            break;
-            case 17:
-            district = 'Yuen Long Hong Kong';
-            break;
-            case 18:
-            district = 'Tung Chung Hong Kong';
-            break;
-            default:
-            district = 'Central Hong Kong';
-          }
-
-          geocoder.geocode( { 'address': district}, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-              console.log(results[0]);
-
-              var location = results[0].geometry.location;
-
-              map.setZoom(14);
-              map.setCenter(results[0].geometry.location);
+      map.setZoom(14);
+      map.setCenter(results[0].geometry.location);
           /*var marker = new google.maps.Marker({
             map: map,
             position: results[0].geometry.location
@@ -734,25 +551,25 @@ $scope.initialize = function() {
         }
       })
 
-        }
+}
 
 
-        $scope.testing = function() {
+$scope.testing = function() {
 
-          var myLatLng = {lat: 22.3864207, lng: 114.2093172};
+  var myLatLng = {lat: 22.3864207, lng: 114.2093172};
 
-          var marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-            title: 'Hello World!'
-          });
-        }
+  var marker = new google.maps.Marker({
+    position: myLatLng,
+    map: map,
+    title: 'Hello World!'
+  });
+}
 
 
-        $scope.getUser = function() {
-          var user = firebase.auth().currentUser;
-          console.log(user);
-        }
+$scope.getUser = function() {
+  var user = firebase.auth().currentUser;
+  console.log(user);
+}
 
 
 
