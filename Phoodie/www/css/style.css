@@ -112,3 +112,12 @@
 #target {
         width: 345px;
       }
+
+#map {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.scroll {
+  height: 100% !important;
+}
