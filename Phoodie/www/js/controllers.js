@@ -51,7 +51,7 @@ angular.module('phoodie.controllers', [])
 
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
 
-            var circle = new google.maps.Circle({
+            /*var circle = new google.maps.Circle({
               strokeColor: '#FF0000',
               strokeOpacity: 0.1,
               strokeWeight: 0,
@@ -59,7 +59,7 @@ angular.module('phoodie.controllers', [])
               map: map,
               center: myLatlng,
               radius: 250
-            }) 
+            }) */
 
             var restaurants = {
               location: {lat: lat, lng: long},
@@ -154,10 +154,12 @@ angular.module('phoodie.controllers', [])
             });
 
             var markers = [];
+
             // [START region_getplaces]
             // Listen for the event fired when the user selects a prediction and retrieve
             // more details for that place.
             searchBox.addListener('places_changed', function() {
+
               var places = searchBox.getPlaces();
 
               if (places.length == 0) {
@@ -170,7 +172,7 @@ angular.module('phoodie.controllers', [])
               });
               markers = [];
 
-              circle.setMap(null);
+              
 
               // For each place, get the icon, name and location.
               var bounds = new google.maps.LatLngBounds();
@@ -183,7 +185,7 @@ angular.module('phoodie.controllers', [])
 
                 map.fitBounds(bounds);
 
-                var circle = new google.maps.Circle({
+                /*var circle = new google.maps.Circle({
                   strokeColor: '#FF0000',
                   strokeOpacity: 0.1,
                   strokeWeight: 0,
@@ -191,7 +193,7 @@ angular.module('phoodie.controllers', [])
                   map: map,
                   center: place.geometry.location,
                   radius: 250
-                }) 
+                }) */
 
                 var restaurants = {
                   location: place.geometry.location,
@@ -275,7 +277,6 @@ angular.module('phoodie.controllers', [])
                 
               });
           });
-
 
                    $scope.map = map;   
                    $ionicLoading.hide();           
