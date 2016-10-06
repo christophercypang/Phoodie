@@ -787,8 +787,14 @@ $scope.getUser = function() {
 
   $scope.doLogout = function(){
     firebase.auth().signOut().then(function(){
+
+      var loginSuccessPopup = $ionicPopup.alert({
+        title: 'Successfully Signed Out',
+      })
+
       console.log('Successfully signed out');
       loggedIn = 0;
+      $window.location.href = '#/tab/maps';
     }, function(error){
       console.log('error happened');
     })
