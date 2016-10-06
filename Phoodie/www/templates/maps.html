@@ -1,9 +1,9 @@
-<ion-view view-title="Maps" >
+<ion-view hide-nav-bar="true">
 
-	<ion-content ng-controller="MapCtrl" ng-init="initAutocomplete(); onPlaceChanged()">
+	<ion-content ng-controller="MapCtrl" ng-init="initialize()">
 
 
-		<div class="container">
+		<!-- <div class="container">
 			<div class='col-sm-6'>
 				<form name="searchForm" class='searchbar' novalidate ng-submit="search()">
 					<div class="input-group">
@@ -29,8 +29,12 @@
 			<div class='col-sm-1 loginbutton' ng-controller='UserCtrl'>
 				<button class='btn btn-primary' ng-click='doLogout2(); doLogout()'> Logout </button>
 			</div> 
-		</div>
-		<div id="map" data-tap-disabled="true"></div>
+		</div> -->
+		
+			<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+			<div id="map" data-tap-disabled="true"></div>
+			
+
 	</ion-content>
 </ion-view>
 
