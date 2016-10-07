@@ -820,6 +820,7 @@ $scope.getUser = function() {
       height: 800,
       quality: 80
     };
+    
 
     $cordovaImagePicker.getPictures(options)
       .then(function (results) {
