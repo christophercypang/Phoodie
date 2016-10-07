@@ -813,8 +813,6 @@ $scope.getUser = function() {
 
 .controller('UploadCtrl', function($scope, $firebaseObject, $cordovaImagePicker, $cordovaFile) {
 
-/*
-
   $scope.doGetImage = function() {
     var options = {
       maximumImagesCount: 1, //only pick 1 image
@@ -830,26 +828,6 @@ $scope.getUser = function() {
         //confirm we are getting image back
         alert(results[0]);
 
-        //read the image into an array buffer
-        //from ngcordova/plugins/file documentation
-        var fileName = results[0].replace(/^.*[\\\/]/, '');
-
-        $cordovaFile.readAsText(cordova.file.tempDirectory, fileName)
-          .then(function (success) {
-            //success - get blob data
-            var imageBlob = new Blob([success], {type: "image/jpeg"});
-
-            saveToFirebase(imageBlob, fileName, function(_response){
-                if(_response) {
-                  alert(_response.downloadURL);
-                }
-            });
-
-
-          }, function(error) {
-            //error
-          });
-
 
       }, function (error) {
         // error getting photos
@@ -859,6 +837,8 @@ $scope.getUser = function() {
 
 
     // from firebase/storage/web/upload-files
+
+    /*
 
     function saveToFirebase(_imageBlob, _filename, _callback) {
 
@@ -894,15 +874,7 @@ $scope.getUser = function() {
         // when done, pass back information on the saved image
         _callback(uploadTask.snapshot)
       });
-    }
-
-    $scope.testUpload = function() {
-
-    }
-
-
-
-    */
+    }*/
 
 
 
