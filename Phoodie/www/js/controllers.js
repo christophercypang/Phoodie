@@ -609,6 +609,7 @@ $scope.getUser = function() {
 .controller('PhotoCtrl', function($scope, $cordovaCamera, $firebaseObject) {
 
   var ref = firebase.database().ref();
+  var storageRef = firebase.storage().ref();
   $scope.data = $firebaseObject(ref);
 
 
@@ -628,11 +629,56 @@ $scope.getUser = function() {
                     saveToPhotoAlbum: true
                   };
 
-                  $cordovaCamera.getPicture(options).then(function (imageData) {
+                  $cordovaCamera.getPicture(options).then(function(imageURI){
+                    window.resolveLocalFileSystemURL(imageURI, function(fileEntry){
+                      fileEntry.file(function(file){
+
+                        var reader = new FileReader();
+                        reader.onloadend = function(){
+                          // This blob object can be saved to firebase
+                          var blob = new Blob([this.result], {type: "image/jpeg"});
+
+                          //create the storage ref
+                          var ref = storageRef.child('images/test');
+                          // Uplaod the file
+                          uploadPhoto(blob,ref);
+
+                        };
+                        reader.readAsArrayBuffer(file);
+
+                      });
+                    }, function(error){
+                      console.log(error);
+                    })
+                  })
+
+
+                  /*$cordovaCamera.getPicture(options).then(function (imageData) {
                     $scope.imgURI = "data:image/jpeg;base64," + imageData;
                   }, function (err) {
                         // An error occured. Show a message to the user
-                      });
+                        console.log("ERROR: " + error);
+                  }); */
+                }
+
+                $scope.uploadPhoto = function(file, ref){
+                  var task = ref.put(file);
+                  //Update progress bar
+                  task.on('state_changed', function(snapshot){
+                    //nothing
+                  }, function(error){
+                    //handel unsuccessful uploads
+                  }, function(){
+                    //handle successful uploads on complete
+                    $scope.downloadURL = task.snapshot.downloadURL;
+                    $scope.actualKey = databaseRef.child('posts').push().key;
+
+                    databaseRef.child('posts/' + $scope.actualKey).update({
+                      url: $scope.downloadURL,
+                      id: $scope.actualKey,
+                      time: firebase.database.ServerValue.TIMESTAMP,
+                    })
+                  })
                 }
 
               })
