@@ -740,6 +740,17 @@ $scope.getUser = function() {
 
   } 
 
+  $scope.createAccountAction = function(firstName, lastName, email, password, confirmPassword){
+    console.log(firstName, lastName, email, password, confirmPassword);
+
+    if(password !== confirmPassword){
+      // alert password has to be same
+    }
+
+    if()
+
+  }
+
 
   $scope.doLogin = function(email, password){
     console.log(email);
