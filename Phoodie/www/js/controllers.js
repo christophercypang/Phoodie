@@ -745,9 +745,33 @@ $scope.getUser = function() {
 
     if(password !== confirmPassword){
       // alert password has to be same
-    }
+       var alertPopup = $ionicPopup.alert({
+        title: 'Password Does Not Match!',
+        template: 'Please Reconfirm Your Password'
+      })
+    } else {
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error){
+        //handle errors here
+        var errorCode = error.code;
+        var errorMessage = error.message;
+      })
 
-    if()
+      $scope.updateUser(firstName, lastName);
+
+      }
+
+  }
+
+  $scope.updateUser = function(firstName, lastName){
+
+    var user = firebase.auth().currentUser;
+      user.updateProfile({
+        displayName: firstName + ' ' + lastName
+      }).then(function(){
+        console.log('update successful');
+      }, function(error){
+        console.log('error');
+      })
 
   }
 

@@ -123,3 +123,7 @@
 .scroll {
   height: 100% !important;
 }
+
+.popup-body{
+	text-align: center !important;
+}
