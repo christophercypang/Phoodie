@@ -1,0 +1,43 @@
+<div class="top" ng-controller="UserCtrl">
+	
+	<div class='loginform'>
+		<form name="loginform" novalidate>
+
+        <label class="item item-input">
+            <input type="text" placeholder="First Name" name="firstName" ng-model="firstName" required>
+        </label>
+
+        <label class="item item-input">
+            <input type="text" placeholder="Last Name" name="lastName" ng-model="lastName" required>
+        </label>
+
+		<label class="item item-input">
+			<input type="email" placeholder="Email" name="email" ng-model="email" required>
+		</label>
+
+		<label class="item item-input">
+            <input type="password" placeholder="Password" name="password" ng-model="password" required show-hide-input>
+        </label>
+
+        <label class="item item-input">
+            <input type="password" placeholder="Confirm Password" name="confirmPassword" ng-model="confirmPassword" required show-hide-input>
+        </label>
+
+        <a class="button button-small button-block icon-left ion-help-circled" ng-click="goBackToLogin()">
+            Already Have An Account?
+        </a>
+
+        <button type="submit" class="log-in button button-block bottombuttonblock" ng-click="doLogin(email, password)" ng-disabled="loginform.$invalid">
+            Sign In
+         </button>
+         <!--
+         <button type="submit" class="log-in button button-block bottombuttonblock">
+            Cancel
+         </button> -->
+
+		</form>
+	</div>
+		
+
+</div>
+	

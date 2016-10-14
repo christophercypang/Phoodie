@@ -721,6 +721,25 @@ $scope.getUser = function() {
               });
   };
 
+  $scope.goBackToLogin = function(){
+    createAccountPopup.close();
+    $scope.loginPopUp();
+  }
+
+  $scope.createAccountTemplate = function() {
+      loginPopup.close();
+      console.log('actually closed');
+      $scope.data = {};
+      createAccountPopup = $ionicPopup.show({
+        templateUrl: 'templates/createAccount.html',
+        title: 'Create Account',
+        buttons: [
+          { text: '', type: 'close-popup ion-ios-close-outline' }
+        ]
+      })
+
+  } 
+
 
   $scope.doLogin = function(email, password){
     console.log(email);
