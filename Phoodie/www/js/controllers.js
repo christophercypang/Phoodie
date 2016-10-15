@@ -743,6 +743,15 @@ $scope.getUser = function() {
   $scope.createAccountAction = function(firstName, lastName, email, password, confirmPassword){
     console.log(firstName, lastName, email, password, confirmPassword);
 
+    firstName = firstName.toLowerCase();
+    var modFirstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+    console.log(modFirstName);
+
+    lastName = lastName.toLowerCase();
+    var modLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+    console.log(modLastName);
+
+
     if(password !== confirmPassword){
       // alert password has to be same
        var alertPopup = $ionicPopup.alert({
@@ -756,23 +765,30 @@ $scope.getUser = function() {
         var errorMessage = error.message;
       })
 
-      $scope.updateUser(firstName, lastName);
+      setTimeout(function(){
+        $scope.updateUser(modFirstName, modLastName);
+      }, 2000);
 
       }
 
   }
 
-  $scope.updateUser = function(firstName, lastName){
+  $scope.updateUser = function(modFirstName, modLastName){
 
     var user = firebase.auth().currentUser;
       user.updateProfile({
-        displayName: firstName + ' ' + lastName
+        displayName: modFirstName + ' ' + modLastName
       }).then(function(){
         console.log('update successful');
       }, function(error){
         console.log('error');
       })
 
+  }
+
+  $scope.getUserName = function(){
+    var user = firebase.auth().currentUser;
+    console.log(user.displayName);
   }
 
 
