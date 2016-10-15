@@ -51,7 +51,7 @@ angular.module('phoodie.controllers', [])
 
             var map = new google.maps.Map(document.getElementById("map"), mapOptions);   
 
-            var circle = new google.maps.Circle({
+            /*var circle = new google.maps.Circle({
               strokeColor: '#FF0000',
               strokeOpacity: 0.1,
               strokeWeight: 0,
@@ -59,7 +59,7 @@ angular.module('phoodie.controllers', [])
               map: map,
               center: myLatlng,
               radius: 250
-            }) 
+            }) */
 
             var restaurants = {
               location: {lat: lat, lng: long},
@@ -154,10 +154,12 @@ angular.module('phoodie.controllers', [])
             });
 
             var markers = [];
+
             // [START region_getplaces]
             // Listen for the event fired when the user selects a prediction and retrieve
             // more details for that place.
             searchBox.addListener('places_changed', function() {
+
               var places = searchBox.getPlaces();
 
               if (places.length == 0) {
@@ -170,7 +172,7 @@ angular.module('phoodie.controllers', [])
               });
               markers = [];
 
-              circle.setMap(null);
+              
 
               // For each place, get the icon, name and location.
               var bounds = new google.maps.LatLngBounds();
@@ -183,7 +185,7 @@ angular.module('phoodie.controllers', [])
 
                 map.fitBounds(bounds);
 
-                var circle = new google.maps.Circle({
+                /*var circle = new google.maps.Circle({
                   strokeColor: '#FF0000',
                   strokeOpacity: 0.1,
                   strokeWeight: 0,
@@ -191,7 +193,7 @@ angular.module('phoodie.controllers', [])
                   map: map,
                   center: place.geometry.location,
                   radius: 250
-                }) 
+                }) */
 
                 var restaurants = {
                   location: place.geometry.location,
@@ -275,7 +277,6 @@ angular.module('phoodie.controllers', [])
                 
               });
           });
-
 
                    $scope.map = map;   
                    $ionicLoading.hide();           
@@ -608,6 +609,7 @@ $scope.getUser = function() {
 .controller('PhotoCtrl', function($scope, $cordovaCamera, $firebaseObject) {
 
   var ref = firebase.database().ref();
+  var storageRef = firebase.storage().ref();
   $scope.data = $firebaseObject(ref);
 
 
@@ -627,11 +629,56 @@ $scope.getUser = function() {
                     saveToPhotoAlbum: true
                   };
 
-                  $cordovaCamera.getPicture(options).then(function (imageData) {
+                  $cordovaCamera.getPicture(options).then(function(imageURI){
+                    window.resolveLocalFileSystemURL(imageURI, function(fileEntry){
+                      fileEntry.file(function(file){
+
+                        var reader = new FileReader();
+                        reader.onloadend = function(){
+                          // This blob object can be saved to firebase
+                          var blob = new Blob([this.result], {type: "image/jpeg"});
+
+                          //create the storage ref
+                          var ref = storageRef.child('images/test');
+                          // Uplaod the file
+                          uploadPhoto(blob,ref);
+
+                        };
+                        reader.readAsArrayBuffer(file);
+
+                      });
+                    }, function(error){
+                      console.log(error);
+                    })
+                  })
+
+
+                  /*$cordovaCamera.getPicture(options).then(function (imageData) {
                     $scope.imgURI = "data:image/jpeg;base64," + imageData;
                   }, function (err) {
                         // An error occured. Show a message to the user
-                      });
+                        console.log("ERROR: " + error);
+                  }); */
+                }
+
+                $scope.uploadPhoto = function(file, ref){
+                  var task = ref.put(file);
+                  //Update progress bar
+                  task.on('state_changed', function(snapshot){
+                    //nothing
+                  }, function(error){
+                    //handel unsuccessful uploads
+                  }, function(){
+                    //handle successful uploads on complete
+                    $scope.downloadURL = task.snapshot.downloadURL;
+                    $scope.actualKey = databaseRef.child('posts').push().key;
+
+                    databaseRef.child('posts/' + $scope.actualKey).update({
+                      url: $scope.downloadURL,
+                      id: $scope.actualKey,
+                      time: firebase.database.ServerValue.TIMESTAMP,
+                    })
+                  })
                 }
 
               })
@@ -673,6 +720,76 @@ $scope.getUser = function() {
 
               });
   };
+
+  $scope.goBackToLogin = function(){
+    createAccountPopup.close();
+    $scope.loginPopUp();
+  }
+
+  $scope.createAccountTemplate = function() {
+      loginPopup.close();
+      console.log('actually closed');
+      $scope.data = {};
+      createAccountPopup = $ionicPopup.show({
+        templateUrl: 'templates/createAccount.html',
+        title: 'Create Account',
+        buttons: [
+          { text: '', type: 'close-popup ion-ios-close-outline' }
+        ]
+      })
+
+  } 
+
+  $scope.createAccountAction = function(firstName, lastName, email, password, confirmPassword){
+    console.log(firstName, lastName, email, password, confirmPassword);
+
+    firstName = firstName.toLowerCase();
+    var modFirstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+    console.log(modFirstName);
+
+    lastName = lastName.toLowerCase();
+    var modLastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+    console.log(modLastName);
+
+
+    if(password !== confirmPassword){
+      // alert password has to be same
+       var alertPopup = $ionicPopup.alert({
+        title: 'Password Does Not Match!',
+        template: 'Please Reconfirm Your Password'
+      })
+    } else {
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error){
+        //handle errors here
+        var errorCode = error.code;
+        var errorMessage = error.message;
+      })
+
+      setTimeout(function(){
+        $scope.updateUser(modFirstName, modLastName);
+      }, 2000);
+
+      }
+
+  }
+
+  $scope.updateUser = function(modFirstName, modLastName){
+
+    var user = firebase.auth().currentUser;
+      user.updateProfile({
+        displayName: modFirstName + ' ' + modLastName
+      }).then(function(){
+        console.log('update successful');
+      }, function(error){
+        console.log('error');
+      })
+
+  }
+
+  $scope.getUserName = function(){
+    var user = firebase.auth().currentUser;
+    console.log(user.displayName);
+  }
 
 
   $scope.doLogin = function(email, password){
@@ -746,9 +863,47 @@ $scope.getUser = function() {
     console.log('after popup loggedin ' + loggedIn);
     loginPopup.close();
 
+    var user = firebase.auth().currentUser;
+    var display;
+
+    if(user.displayName != null){
+      display = user.displayName;
+    } else {
+      display = userEmail;
+    }
+
+
     var loginSuccessPopup = $ionicPopup.alert({
       title: 'Login Successful!',
-      template: 'Welcome, ' + userEmail
+      template: 'Welcome, ' + display
+    })
+
+  }
+
+  $scope.forgetPassword = function(){
+    loginPopup.close();
+
+    forgetPasswordPopup = $ionicPopup.show({
+        templateUrl: 'templates/forgetPassword.html',
+        title: 'Forget Password',
+        buttons: [
+          { text: '', type: 'close-popup ion-ios-close-outline' }
+        ]
+      })
+
+
+  }
+
+
+
+  $scope.resetPassword = function(email){
+    var auth = firebase.auth();
+    var emailAddress = email;
+
+    auth.sendPasswordResetEmail(emailAddress).then(function(){
+      console.log('email sent');
+    }, function(error){
+      console.log('error happened');
     })
 
   }
@@ -786,8 +941,14 @@ $scope.getUser = function() {
 
   $scope.doLogout = function(){
     firebase.auth().signOut().then(function(){
+
+      var loginSuccessPopup = $ionicPopup.alert({
+        title: 'Successfully Signed Out',
+      })
+
       console.log('Successfully signed out');
       loggedIn = 0;
+      $window.location.href = '#/tab/maps';
     }, function(error){
       console.log('error happened');
     })
@@ -806,8 +967,6 @@ $scope.getUser = function() {
 
 .controller('UploadCtrl', function($scope, $firebaseObject, $cordovaImagePicker, $cordovaFile) {
 
-/*
-
   $scope.doGetImage = function() {
     var options = {
       maximumImagesCount: 1, //only pick 1 image
@@ -815,6 +974,7 @@ $scope.getUser = function() {
       height: 800,
       quality: 80
     };
+    
 
     $cordovaImagePicker.getPictures(options)
       .then(function (results) {
@@ -822,26 +982,6 @@ $scope.getUser = function() {
 
         //confirm we are getting image back
         alert(results[0]);
-
-        //read the image into an array buffer
-        //from ngcordova/plugins/file documentation
-        var fileName = results[0].replace(/^.*[\\\/]/, '');
-
-        $cordovaFile.readAsText(cordova.file.tempDirectory, fileName)
-          .then(function (success) {
-            //success - get blob data
-            var imageBlob = new Blob([success], {type: "image/jpeg"});
-
-            saveToFirebase(imageBlob, fileName, function(_response){
-                if(_response) {
-                  alert(_response.downloadURL);
-                }
-            });
-
-
-          }, function(error) {
-            //error
-          });
 
 
       }, function (error) {
@@ -852,6 +992,8 @@ $scope.getUser = function() {
 
 
     // from firebase/storage/web/upload-files
+
+    /*
 
     function saveToFirebase(_imageBlob, _filename, _callback) {
 
@@ -887,15 +1029,7 @@ $scope.getUser = function() {
         // when done, pass back information on the saved image
         _callback(uploadTask.snapshot)
       });
-    }
-
-    $scope.testUpload = function() {
-
-    }
-
-
-
-    */
+    }*/
 
 
 

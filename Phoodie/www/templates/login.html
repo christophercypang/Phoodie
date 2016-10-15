@@ -8,8 +8,11 @@
 		<label class="item item-input">
             <input type="password" placeholder="Password" name="password" ng-model="password" required show-hide-input>
         </label>
-        <a class="button button-small button-block icon-left ion-help-circled" ng-click="showForgotPassword()">
+        <a class="button button-small button-block icon-left ion-help-circled" ng-click="forgetPassword()">
             Forgot password
+        </a>
+        <a class="button button-small button-block icon-left ion-person-add" ng-click="createAccountTemplate()">
+            Sign Up for New Account
         </a>
         <button type="submit" class="log-in button button-block bottombuttonblock" ng-click="doLogin(email, password)" ng-disabled="loginform.$invalid">
             Sign In
