@@ -863,9 +863,47 @@ $scope.getUser = function() {
     console.log('after popup loggedin ' + loggedIn);
     loginPopup.close();
 
+    var user = firebase.auth().currentUser;
+    var display;
+
+    if(user.displayName != null){
+      display = user.displayName;
+    } else {
+      display = userEmail;
+    }
+
+
     var loginSuccessPopup = $ionicPopup.alert({
       title: 'Login Successful!',
-      template: 'Welcome, ' + userEmail
+      template: 'Welcome, ' + display
+    })
+
+  }
+
+  $scope.forgetPassword = function(){
+    loginPopup.close();
+
+    forgetPasswordPopup = $ionicPopup.show({
+        templateUrl: 'templates/forgetPassword.html',
+        title: 'Forget Password',
+        buttons: [
+          { text: '', type: 'close-popup ion-ios-close-outline' }
+        ]
+      })
+
+
+  }
+
+
+
+  $scope.resetPassword = function(email){
+    var auth = firebase.auth();
+    var emailAddress = email;
+
+    auth.sendPasswordResetEmail(emailAddress).then(function(){
+      console.log('email sent');
+    }, function(error){
+      console.log('error happened');
     })
 
   }
