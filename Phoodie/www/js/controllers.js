@@ -767,7 +767,7 @@ $scope.getUser = function() {
 
       setTimeout(function(){
         $scope.updateUser(modFirstName, modLastName);
-      }, 2000);
+      }, 1000);
 
       }
 
@@ -776,10 +776,20 @@ $scope.getUser = function() {
   $scope.updateUser = function(modFirstName, modLastName){
 
     var user = firebase.auth().currentUser;
+    var fullName = modFirstName + ' ' + modLastName;
+
       user.updateProfile({
-        displayName: modFirstName + ' ' + modLastName
+        displayName: fullName
       }).then(function(){
         console.log('update successful');
+        createAccountPopup.close();
+
+        var confirmAccountPopup = $ionicPopup.alert({
+          title: 'Account Created',
+          template: 'Welcome, ' + fullName
+        })
+
+
       }, function(error){
         console.log('error');
       })
@@ -902,8 +912,22 @@ $scope.getUser = function() {
 
     auth.sendPasswordResetEmail(emailAddress).then(function(){
       console.log('email sent');
+
+      forgetPasswordPopup.close();
+
+      var confirmPasswordPopup = $ionicPopup.alert({
+        title: 'Password Reset',
+        template: 'An password reset e-mail has been sent to your e-maill address. Please follow the instructions on the e-mail to reset your password.'
+      })
+
+
     }, function(error){
       console.log('error happened');
+      var errorPasswordPopup = $ionicPopup.alert({
+         title: 'Password Reset',
+        template: 'We couldn not find your e-mail address in our database, please make sure your e-mail address was correctly typed.'
+      })
+
     })
 
   }
@@ -938,6 +962,22 @@ $scope.getUser = function() {
       });
     }
   } */
+
+
+  $scope.confirmLogout = function(){
+    var confirmLogoutPopup = $ionicPopup.confirm({
+      title: 'Confirm Logout',
+      template: 'Are you sure you want to logout?'
+    })
+    confirmLogoutPopup.then(function(res){
+      if(res){
+        $scope.doLogout();
+      } else {
+        //do nothing
+      }
+    })
+  }
+
 
   $scope.doLogout = function(){
     firebase.auth().signOut().then(function(){
