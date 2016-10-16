@@ -685,7 +685,7 @@ $scope.getUser = function() {
 
 
 
-.controller('UserCtrl', function($scope, $firebaseObject, $ionicPopup, $window){
+.controller('UserCtrl', function($scope, $firebaseObject, $ionicPopup, $window, $rootScope){
   var ref = firebase.database().ref();
   $scope.data = $firebaseObject(ref);
   var userEmail;
@@ -766,17 +766,28 @@ $scope.getUser = function() {
       })
 
       setTimeout(function(){
-        $scope.updateUser(modFirstName, modLastName);
-      }, 1000);
+        $scope.createUserName(modFirstName, modLastName);
+      }, 1100);
 
       }
 
   }
 
-  $scope.updateUser = function(modFirstName, modLastName){
+  $scope.createUserName = function(modFirstName, modLastName){
 
     var user = firebase.auth().currentUser;
     var fullName = modFirstName + ' ' + modLastName;
+
+    if(user == null){
+      // create account error
+      var confirmAccountPopup = $ionicPopup.alert({
+          title: 'Error',
+          template: 'The e-mail you provided already exists in our system, please login with the provided email or resgister with another email address'
+        })
+
+
+
+    } else {
 
       user.updateProfile({
         displayName: fullName
@@ -794,11 +805,18 @@ $scope.getUser = function() {
         console.log('error');
       })
 
+    }
+
   }
 
-  $scope.getUserName = function(){
+  $scope.getCurrentUserInfo = function(){
     var user = firebase.auth().currentUser;
-    console.log(user.displayName);
+
+    $rootScope.displayName = user.displayName;
+    $rootScope.email = user.email;
+    //console.log(email);
+
+
   }
 
 
@@ -807,6 +825,15 @@ $scope.getUser = function() {
     console.log(password);
     
     firebase.auth().signInWithEmailAndPassword(email,password).catch(function(error){
+      // error alert popup
+
+      var errorLoginPopup = $ionicPopup.alert({
+          title: 'Login Error',
+          template: 'Please double check your login e-mail or password. Sign up for an account if you do not have one yet.'
+        })
+
+
+
       var errorCode = error.code;
       var errorMessage = error.message;
       console.log(errorMessage);

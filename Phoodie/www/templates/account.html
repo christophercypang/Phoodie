@@ -1,12 +1,52 @@
 <ion-view hide-nav-bar='true'>
 
-	<ion-content ng-controller="UserCtrl">
+	<ion-content ng-controller="UserCtrl" ng-init="getCurrentUserInfo()">
 
+		<div class='userDisplay'>
 
-		<div class='col-sm-1 loginbutton'>
+			<div class='profilePicture'>
+				<img src='img/defaultUser.jpg' class='profilePic'>
+			</div>
+			<div class='userInfo'>
+				<p class='userFullName'>{{displayName}}</p>
+				<p class='userEmail'>{{email}}</p>
+			</div>
+			<div class='col text-center'>
 				<button class='btn btn-primary' ng-click='confirmLogout()'> Logout </button>
-				<button class='btn btn-primary' ng-click='getUserName()'> Get User Name </button>
-		</div> 
+			</div>
+
+			<div class='uploads'>
+				Uploads
+			</div>
+
+
+			<!-- this part will soon be transferred to controller, only for testing/display purposes now -->
+			<div class='photoGrid'>
+				<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4 photoboxes'>
+					1
+				</div>
+				<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4 photoboxes'>
+					2
+				</div>
+				<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4 photoboxes'>
+					3
+				</div>
+			</div>
+
+			<div class='photoGrid'>
+				<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4 photoboxes'>
+					4
+				</div>
+				<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4 photoboxes'>
+					5
+				</div>
+				<div class='col-xs-4 col-sm-4 col-md-4 col-lg-4 photoboxes'>
+					6
+				</div>
+			</div>
+
+
+		</div>
 
 		</ion-content>
 

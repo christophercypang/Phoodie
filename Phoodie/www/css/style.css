@@ -127,3 +127,47 @@
 .popup-body{
 	text-align: center !important;
 }
+
+.userDisplay{
+	margin-top: 5%;
+	margin-left: 10%;
+	margin-right: 10%;
+	background-color: #FFFDF5;
+	height: 80%;
+	border-radius: 10px;
+}
+
+.profilePicture{
+	text-align: center;
+	padding-top: 5%;
+}
+
+.profilePic{
+	border-radius: 10px;
+	height: 150px; 
+	width: 150px;
+}
+
+.userInfo{
+	text-align: center;
+	margin-top: 10px;
+}
+
+.userFullName{
+	font-size: 24px;
+}
+
+.userEmail{
+	margin-top: -5px;
+}
+
+.uploads{
+	margin-top: 10%;
+	margin-left: 5%;
+}
+
+.photoboxes{
+	/* height = width of the boxes */
+	/* just resize when upload photos */
+	height:  75px;
+}
