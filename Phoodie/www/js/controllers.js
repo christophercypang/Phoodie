@@ -726,6 +726,19 @@ $scope.getUser = function() {
     $scope.loginPopUp();
   }
 
+  $scope.editProfile = function(){
+    var user = firebase.auth().currentUser;
+    var fullName = user.displayName;
+
+    var splitted = fullName.split(" ");
+    var firstName = splitted[0];
+    var lastName = splitted[1];
+    console.log(firstName);
+    console.log(lastName);
+
+  }
+
+
   $scope.createAccountTemplate = function() {
       loginPopup.close();
       console.log('actually closed');
