@@ -810,12 +810,12 @@ $scope.getUser = function() {
   }
 
   $scope.getCurrentUserInfo = function(){
+
     var user = firebase.auth().currentUser;
 
     $rootScope.displayName = user.displayName;
     $rootScope.email = user.email;
     //console.log(email);
-
 
   }
 
@@ -1011,6 +1011,10 @@ $scope.getUser = function() {
 
       var loginSuccessPopup = $ionicPopup.alert({
         title: 'Successfully Signed Out',
+      })
+
+      loginSuccessPopup.then(function(res){
+        $window.location.reload(true);
       })
 
       console.log('Successfully signed out');

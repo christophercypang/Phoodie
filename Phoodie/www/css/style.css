@@ -133,7 +133,7 @@
 	margin-left: 10%;
 	margin-right: 10%;
 	background-color: #FFFDF5;
-	height: 80%;
+	height: 90%;
 	border-radius: 10px;
 }
 
@@ -162,12 +162,24 @@
 }
 
 .uploads{
-	margin-top: 10%;
-	margin-left: 5%;
+	margin-top: 30%;
+	margin-left: 10%;
 }
 
 .photoboxes{
 	/* height = width of the boxes */
 	/* just resize when upload photos */
 	height:  75px;
+}
+
+.accountInfo{
+	margin-top: 5%;
+}
+
+.accountInfoText{
+	text-align: center;
+}
+
+.photoGrid{
+	text-align: center;
 }
